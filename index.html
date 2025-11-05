@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PAINEL-CAsT$</title>
+<title>PAINEL - CAst$</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -76,6 +76,73 @@ a{color:var(--accent)}
   .terminal{top:6%;height:62vh}
   .mini-window{width:160px;height:100px}
 }
+.terminal-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 60%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  border: 1px solid #7f00ff;
+  border-radius: 10px;
+  color: #a200ff;
+  font-family: monospace;
+  font-size: 14px;
+  overflow-y: auto;
+  box-shadow: 0 0 20px #a200ff55;
+  z-index: 999;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.terminal-header {
+  padding: 6px 10px;
+  background: rgba(30, 0, 60, 0.5);
+  border-bottom: 1px solid #7f00ff44;
+  font-weight: bold;
+  color: #c77dff;
+}
+
+.terminal-body {
+  padding: 10px;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+
+.shutdown-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skull-large {
+  font-size: 11px;
+  color: #a200ff;
+  white-space: pre;
+}
+
+.shutdown-msg {
+  color: #a200ff;
+  font-size: 28px;
+  line-height: 45px;
+  text-align: left;
+  font-family: monospace;
+  margin-left: 10px;
+}
+
+.shutdown-count {
+  margin-top: 20px;
+  text-align: center;
+  color: #a200ff;
+  font-size: 20px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -52%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
 </style>
 </head>
 <body>
@@ -83,19 +150,23 @@ a{color:var(--accent)}
 
   <!-- boot screen -->
   <div id="bootScreen" class="boot-screen">
-    <div style="font-weight:700;font-size:20px;color:var(--accent)">Sistema discreto — inicialização</div>
-    <div class="boot-msg">Pressione <strong>Alt + Shift + X</strong> para abrir o terminal</div>
+    <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
+    <div class="boot-msg">Servidor online <strong>há</strong> 16 horas e 39 minutos</div>
     <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
   </div>
 
-  <!-- presentation main (hidden until boot) -->
+ <!-- presentation main (hidden until boot) -->
   <div id="presentation" class="presentation" aria-hidden="true">
     <div class="meta">
       <div class="logo">RA</div>
       <div>
         <div style="font-weight:600">Reforma Agrária</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.55)">Apresentação — Castro / Alfredo / Dyogo / Rafael             </div>
-		<div style="align-self: right; font-size: 9px; color: rgba(128, 0, 128, 1)"> acesso remoto de CD:LInuxDoCastro7</div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.55);">
+    Apresentação — <span style="color:#a020f0; font-weight:bold;">Castro</span> / Alfredo / Dyogo / Rafael
+  </div>
+		 <div style="font-size: 11px; color: rgba(170, 100, 255, 1); text-align: right;">
+    acesso remoto de <span style="color:#c77dff;">CD:LInuxDoCastro7</span>
+  </div>
       </div>
     </div>
 
@@ -226,6 +297,7 @@ a{color:var(--accent)}
 
 <!-- mini windows container (fixed above terminal) -->
 <div id="miniContainer" class="mini-container" aria-hidden="true"></div>
+
 
 <script>
 /* --- Helpers & state --- */
@@ -402,14 +474,15 @@ async function processCommand(cmd){
     }
     // special: encerrar servidor
     if(lower === 'encerrar servidor'){
-      appendLine('Comando: encerrar servidor recebido.', 'cmd');
-      appendLine('Desligando serviços...', 'cmd');
-      await sleep(900);
-      appendLine('Servidor encerrado remotamente.', 'ok');
-      await sleep(700);
-      window.location.href = 'https://httpstat.us/404';
-      return;
-    }
+  appendLine('Comando: encerrar servidor recebido.', 'cmd');
+  appendLine('Desligando serviços...', 'cmd');
+  await sleep(900);
+  appendLine('Servidor encerrado remotamente.', 'ok');
+  await sleep(700);
+  await triggerShutdown();
+  return;
+}
+
     appendLine("Comando desconhecido. Digite um número de 1 a 12 (ou 'menu').");
     return;
   }
@@ -573,8 +646,131 @@ presentation.setAttribute('aria-hidden','true');
 const observer = new MutationObserver(()=> termBody.scrollTop = termBody.scrollHeight);
 observer.observe(termBody, {childList:true, subtree:true});
 
+const shutdownOverlay = document.getElementById('shutdownOverlay');
+
+async function triggerShutdown() {
+  // terminal 1 - sequência de códigos "desligando"
+  const terminal1 = document.createElement("div");
+  terminal1.className = "terminal open";
+  terminal1.style.zIndex = 999;
+  terminal1.innerHTML = `
+    <div class="term-top">
+      <div class="term-dots">
+        <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+      </div>
+      <div style="color:var(--accent);font-weight:600;">root@system:~ Encerrando processos</div>
+    </div>
+    <div class="term-body" id="body1"></div>
+  `;
+  document.body.appendChild(terminal1);
+
+  const body1 = terminal1.querySelector("#body1");
+  for (let i = 0; i < 15; i++) {
+    const line = document.createElement("div");
+    line.className = "term-line";
+    line.textContent = "> " + randomHexLine(60);
+    body1.appendChild(line);
+    await sleep(100);
+  }
+
+  // pequena pausa antes do próximo terminal
+  await sleep(600);
+  terminal1.style.opacity = 0.3;
+
+  // terminal 2 - desligamento visual
+  const terminal2 = document.createElement("div");
+  terminal2.className = "terminal open";
+  terminal2.style.zIndex = 1000;
+  terminal2.innerHTML = `
+    <div class="term-top">
+      <div class="term-dots">
+        <div class="term-dot"></div><div class="term-dot"></div><div class="term-dot"></div>
+      </div>
+      <div style="color:var(--accent);font-weight:600;">root@system:~ Desligamento do Sistema</div>
+    </div>
+    <div class="term-body" id="shutdown-layout"></div>
+  `;
+  document.body.appendChild(terminal2);
+
+  const layout = terminal2.querySelector("#shutdown-layout");
+
+  // estrutura flexível com caveira + texto lado a lado
+  layout.style.display = "flex";
+  layout.style.justifyContent = "space-between";
+  layout.style.alignItems = "center";
+  layout.style.height = "100%";
+  layout.style.padding = "20px";
+
+  // área da mensagem
+  const msgArea = document.createElement("div");
+  msgArea.style.flex = "1";
+  msgArea.style.textAlign = "left";
+  msgArea.style.fontSize = "20px";
+  msgArea.style.fontWeight = "700";
+  msgArea.style.color = "var(--accent)";
+  msgArea.innerHTML = `
+    <div>SERVIDOR ENCERRADO</div>
+    <div>DESCONECTANDO SISTEMAS...</div>
+    <div>FORÇANDO DESLIGAMENTO</div>
+  `;
+
+  // caveira à direita
+  const skull = document.createElement("pre");
+  skull.className = "skull";
+  skull.style.fontSize = "12px";
+  skull.style.color = "var(--accent)";
+  skull.style.textAlign = "right";
+  skull.style.marginLeft = "40px";
+  skull.textContent = `
+███████████████████████████
+███████▀▀▀░░░░░░░▀▀▀███████
+████▀░░░░░░░░░░░░░░░░░▀████
+███│░░░░░░░░░░░░░░░░░░░│███
+██▌│░░░░░░░░░░░░░░░░░░░│▐██
+██░└┐░░░░░░░░░░░░░░░░░┌┘░██
+██░░└┐░░░░░░░░░░░░░░░┌┘░░██
+██░░┌┘▄▄▄▄▄░░░░░▄▄▄▄▄└┐░░██
+██▌░│██████▌░░░▐██████│░▐██
+███░│▐███▀▀░░▄░░▀▀███▌│░███
+██▀─┘░░░░░░░▐█▌░░░░░░░└─▀██
+██▄░░░▄▄▄▓░░▀█▀░░▓▄▄▄░░░▄██
+████▄─┘██▌░░░░░░░▐██└─▄████
+█████░░▐█─┬┬┬┬┬┬┬─█▌░░█████
+████▌░░░▀┬┼┼┼┼┼┼┼┬▀░░░▐████
+█████▄░░░└┴┴┴┴┴┴┴┘░░░▄█████
+███████▄░░░░░░░░░░░▄███████
+██████████▄▄▄▄▄▄▄██████████
+███████████████████████████
+  `;
+
+  layout.appendChild(msgArea);
+  layout.appendChild(skull);
+
+  // contagem regressiva no final (centralizada abaixo)
+  const countdown = document.createElement("div");
+  countdown.style.position = "absolute";
+  countdown.style.bottom = "20px";
+  countdown.style.left = "50%";
+  countdown.style.transform = "translateX(-50%)";
+  countdown.style.textAlign = "center";
+  countdown.style.fontSize = "18px";
+  countdown.style.fontWeight = "bold";
+  countdown.style.color = "var(--accent)";
+  terminal2.appendChild(countdown);
+
+  // contagem regressiva
+  for (let i = 3; i > 0; i--) {
+    countdown.textContent = `Desligando em ${i}...`;
+    await sleep(900);
+  }
+
+  // troca direta sem delay pra 404
+  window.location.replace("https://httpstat.us/404");
+}
+
+
 /* note: images blocked on file:// — use GitHub Pages or Live Server for full view */
 </script>
 </body>
 </html>
-
+  https://httpstat.us/404
