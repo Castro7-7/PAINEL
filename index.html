@@ -164,8 +164,8 @@ a{color:var(--accent)}
         <div style="font-size:12px; color:rgba(255,255,255,0.55);">
     Apresentação — <span style="color:#a020f0; font-weight:bold;">Castro</span> / Alfredo / Dyogo / Rafael
   </div>
-		 <div style="font-size: 11px; color: rgba(170, 100, 255, 1); text-align: right;">
-    acesso remoto de <span style="color:#c77dff;">CD:LInuxDoCastro7</span>
+		 <div style="font-size: 11px; display: flex; justify-content: flex-end; color: rgba(170, 100, 255, 1);">
+    Acessado remotamente de <span style="color:#c77dff;">CD:LInuxDoCastro7</span>
   </div>
       </div>
     </div>
@@ -421,44 +421,52 @@ termEdit.addEventListener('keydown', async (ev)=>{
   }
 });
 
+
 /* Login credentials (from you) */
-const VALID_EMAIL = 'dudaducati07@gmail.com';
-const VALID_PASS = 'dudaducati007';
+const USERS = {
+  'dudaducati07@gmail.com': 'dudaducati007',
+  'outro@email.com': 'senha123',
+  '7': '7'
+};
+
+let currentEmail = null;
 
 /* Process commands */
 async function processCommand(cmd){
   const lower = cmd.trim();
 
   if(!loggedIn && !waitingPassword){
-    // first input should be email
-    if(lower === VALID_EMAIL){
-      appendLine('E-mail reconhecido. Informe a senha:');
-      waitingPassword = true;
-    } else {
-      appendLine('E-mail não reconhecido. Tente novamente.');
-    }
+  // first input should be email
+  if(USERS.hasOwnProperty(lower)){
+    appendLine('E-mail reconhecido. Informe a senha:');
+    waitingPassword = true;
+    currentEmail = lower; // guarda o e-mail atual
+  } else {
+    appendLine('E-mail não reconhecido. Tente novamente.');
+  }
+  return;
+}
+
+if(waitingPassword && !loggedIn){
+  // treat as password
+  const expected = USERS[currentEmail];
+  if(lower === expected){
+    appendLine('Verificando credenciais...', 'info');
+    await sleep(600);
+    appendLine('Acesso autorizado. Painel inicializando...', 'ok');
+    loggedIn = true;
+    waitingPassword = false;
+    currentEmail = null;
+    await sleep(400);
+    showMenu();
+    return;
+  } else {
+    appendLine('Senha incorreta. Tente novamente.');
+    waitingPassword = false;
+    currentEmail = null;
     return;
   }
-
-  if(waitingPassword && !loggedIn){
-    // treat as password
-    if(lower === VALID_PASS){
-      appendLine('Verificando credenciais...', 'info');
-      await sleep(600);
-      appendLine('Acesso autorizado. Painel inicializando...', 'ok');
-      loggedIn = true;
-      waitingPassword = false;
-      await sleep(400);
-      // show menu (selection panel)
-      showMenu();
-      return;
-    } else {
-      appendLine('Senha incorreta. Tente novamente.');
-      waitingPassword = false;
-      return;
-    }
-  }
-
+}
   // if logged in, handle numeric selection and other commands
   if(loggedIn){
     // allow 'menu' to redisplay
@@ -705,7 +713,7 @@ async function triggerShutdown() {
   const msgArea = document.createElement("div");
   msgArea.style.flex = "1";
   msgArea.style.textAlign = "left";
-  msgArea.style.fontSize = "20px";
+  msgArea.style.fontSize = "50px";
   msgArea.style.fontWeight = "700";
   msgArea.style.color = "var(--accent)";
   msgArea.innerHTML = `
@@ -717,7 +725,7 @@ async function triggerShutdown() {
   // caveira à direita
   const skull = document.createElement("pre");
   skull.className = "skull";
-  skull.style.fontSize = "12px";
+  skull.style.fontSize = "32px";
   skull.style.color = "var(--accent)";
   skull.style.textAlign = "right";
   skull.style.marginLeft = "40px";
@@ -753,7 +761,7 @@ async function triggerShutdown() {
   countdown.style.left = "50%";
   countdown.style.transform = "translateX(-50%)";
   countdown.style.textAlign = "center";
-  countdown.style.fontSize = "18px";
+  countdown.style.fontSize = "20px";
   countdown.style.fontWeight = "bold";
   countdown.style.color = "var(--accent)";
   terminal2.appendChild(countdown);
@@ -773,3 +781,4 @@ async function triggerShutdown() {
 </script>
 </body>
 </html>
+
