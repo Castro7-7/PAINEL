@@ -143,6 +143,52 @@ a{color:var(--accent)}
   to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  justify-content: center;
+  gap: 10px 80px;
+  margin: 20px auto;
+  width: fit-content;
+  font-family: monospace;
+}
+
+.menu-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item {
+  color: var(--accent, #a020f0);
+  font-size: 14px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.menu-item:hover {
+  color: #d17cff;
+}
+
+#termBody::-webkit-scrollbar {
+  width: 8px;
+}
+
+#termBody::-webkit-scrollbar-track {
+  background: rgba(50, 0, 70, 0.3);
+}
+
+#termBody::-webkit-scrollbar-thumb {
+  background: var(--accent, #a020f0);
+  border-radius: 6px;
+}
+
+#termBody::-webkit-scrollbar-thumb:hover {
+  background: #d17cff;
+}
+
 </style>
 </head>
 <body>
@@ -164,8 +210,8 @@ a{color:var(--accent)}
         <div style="font-size:12px; color:rgba(255,255,255,0.55);">
     Apresentação — <span style="color:#a020f0; font-weight:bold;">Castro</span> / Alfredo / Dyogo / Rafael
   </div>
-		 <div style="font-size: 11px; display: flex; justify-content: flex-end; color: rgba(170, 100, 255, 1);">
-    Acessado remotamente de <span style="color:#c77dff;">CD:LInuxDoCastro7</span>
+		 <div style="font-size: 11px; color: rgba(170, 100, 255, 1); text-align: right;">
+    acesso remoto de <span style="color:#c77dff;">CD:LInuxDoCastro7</span>
   </div>
       </div>
     </div>
@@ -421,15 +467,16 @@ termEdit.addEventListener('keydown', async (ev)=>{
   }
 });
 
-
 /* Login credentials (from you) */
 const USERS = {
   'dudaducati07@gmail.com': 'dudaducati007',
-  'outro@email.com': 'senha123',
+  'castrovip7@email.com': 'castrovip7',
   '7': '7'
 };
 
 let currentEmail = null;
+let serverRunning = true;
+
 
 /* Process commands */
 async function processCommand(cmd){
@@ -467,6 +514,7 @@ if(waitingPassword && !loggedIn){
     return;
   }
 }
+
   // if logged in, handle numeric selection and other commands
   if(loggedIn){
     // allow 'menu' to redisplay
@@ -480,16 +528,39 @@ if(waitingPassword && !loggedIn){
       await handleSelection(n);
       return;
     }
-    // special: encerrar servidor
-    if(lower === 'encerrar servidor'){
-  appendLine('Comando: encerrar servidor recebido.', 'cmd');
+   // comandos de desligamento (vários possíveis)
+const SHUTDOWN_COMMANDS = [
+  'encerrar servidor',
+  'fechar host',
+  'stop server',
+  'fechar server',
+  'x',
+  '7',
+  'fechar',
+  'servidor clear',
+  'server clear',
+  'desligar',
+  'finalizar',
+  'off',
+  'shutdown'
+];
+
+if (SHUTDOWN_COMMANDS.includes(lower)) {
+  if (!serverRunning) {
+    appendLine('O servidor já foi encerrado.', 'warn');
+    return;
+  }
+
+  appendLine(`Comando: ${lower} recebido.`, 'cmd');
   appendLine('Desligando serviços...', 'cmd');
   await sleep(900);
   appendLine('Servidor encerrado remotamente.', 'ok');
+  serverRunning = false;
   await sleep(700);
   await triggerShutdown();
   return;
 }
+
 
     appendLine("Comando desconhecido. Digite um número de 1 a 12 (ou 'menu').");
     return;
@@ -497,27 +568,74 @@ if(waitingPassword && !loggedIn){
 }
 
 /* show simulated menu (lots of fake tools) */
-function showMenu(){
+function showMenu() {
   appendLine('');
   appendLine('Painel de Seleção — Escolha uma opção (digite o número):', 'menu');
-  const options = [
-    '1 — Painel de Dados (SQL )',
+
+  const leftItems = [
+    '1 — Painel de Dados (SQL)',
     '2 — SQL Injector (SQL)',
-    '3 — Scanner de Rede (SQL )',
-    '4 — sniff (SQL )',
-    '5 — brute-force (SQL )',
-    '6 — Rootkit href (SQL )',
+    '3 — Scanner de Rede (SQL)',
+    '4 — sniff (SQL)',
+    '5 — brute-force (SQL)',
+    '6 — Rootkit href (SQL)',
     '7 — const reserved',
-    '8 — Forensics (SQL )',
-    '9 — Gerador de Payload',
+    '8 — Forensics (SQL)',
+    '9 — Gerador de PayloaD',
     '10 — Monitor de Serviços',
-    '11 — Simulação de Exfil (SQL )',
-    '12 — Ferramentas de Segurança '
+    '11 — Simulação de Exfil (SQL)',
+    '12 — Ferramentas de Segurança'
   ];
-  options.forEach(o => appendLine(o));
+
+  const rightItems = [
+    '13 - penetr IN/WA/TE',
+    '14 - Gathering and Vulnerability Analysis',
+    '15 - nMap/detecção',
+    '16 - Engineering Toolkit',
+    '17 - puxar CNH/CPF/rg/DDD/dtaNasDia',
+    '18 - DRsenum, DNS privat',
+    '19 - cisco - touch, forking radar',
+    '20 - Web Applications',
+    '21 - PArsero, leitor de robot.txt',
+    '22 - APTI - teste black-box v98.273.2',
+    '23 - OWASP ZAP, vulnerabilidade exposta',
+    '24 - CONFIGURAÇÕES / DESENVOLVEDOR'
+  ];
+
+  // 🔹 cria o container principal em grid
+  const menuWrap = document.createElement('div');
+  menuWrap.className = 'menu-grid';
+
+  const colLeft = document.createElement('div');
+  const colRight = document.createElement('div');
+  colLeft.className = 'menu-col';
+  colRight.className = 'menu-col';
+
+  leftItems.forEach(text => {
+    const el = document.createElement('div');
+    el.className = 'menu-item';
+    el.textContent = text;
+    colLeft.appendChild(el);
+  });
+
+  rightItems.forEach(text => {
+    const el = document.createElement('div');
+    el.className = 'menu-item';
+    el.textContent = text;
+    colRight.appendChild(el);
+  });
+
+  menuWrap.appendChild(colLeft);
+  menuWrap.appendChild(colRight);
+
+  // 🔹 adiciona no terminal (termBody é o mesmo usado no resto do seu código)
+  termBody.appendChild(menuWrap);
+  termBody.scrollTop = termBody.scrollHeight;
+
   appendLine('');
-  appendLine("executar funçao sob host a VPN ou PROXY");
+  appendLine("executar função sob host a VPN ou PROXY");
 }
+
 
 /* handle selection number - purely simulated outputs */
 async function handleSelection(n){
@@ -713,7 +831,7 @@ async function triggerShutdown() {
   const msgArea = document.createElement("div");
   msgArea.style.flex = "1";
   msgArea.style.textAlign = "left";
-  msgArea.style.fontSize = "50px";
+  msgArea.style.fontSize = "30px";
   msgArea.style.fontWeight = "700";
   msgArea.style.color = "var(--accent)";
   msgArea.innerHTML = `
@@ -725,30 +843,37 @@ async function triggerShutdown() {
   // caveira à direita
   const skull = document.createElement("pre");
   skull.className = "skull";
-  skull.style.fontSize = "32px";
-  skull.style.color = "var(--accent)";
-  skull.style.textAlign = "right";
-  skull.style.marginLeft = "40px";
-  skull.textContent = `
-███████████████████████████
-███████▀▀▀░░░░░░░▀▀▀███████
-████▀░░░░░░░░░░░░░░░░░▀████
-███│░░░░░░░░░░░░░░░░░░░│███
-██▌│░░░░░░░░░░░░░░░░░░░│▐██
-██░└┐░░░░░░░░░░░░░░░░░┌┘░██
-██░░└┐░░░░░░░░░░░░░░░┌┘░░██
-██░░┌┘▄▄▄▄▄░░░░░▄▄▄▄▄└┐░░██
-██▌░│██████▌░░░▐██████│░▐██
-███░│▐███▀▀░░▄░░▀▀███▌│░███
-██▀─┘░░░░░░░▐█▌░░░░░░░└─▀██
-██▄░░░▄▄▄▓░░▀█▀░░▓▄▄▄░░░▄██
-████▄─┘██▌░░░░░░░▐██└─▄████
-█████░░▐█─┬┬┬┬┬┬┬─█▌░░█████
-████▌░░░▀┬┼┼┼┼┼┼┼┬▀░░░▐████
-█████▄░░░└┴┴┴┴┴┴┴┘░░░▄█████
-███████▄░░░░░░░░░░░▄███████
-██████████▄▄▄▄▄▄▄██████████
-███████████████████████████
+skull.style.fontSize = "10px"; // aumenta o tamanho
+skull.style.color = "var(--accent)";
+skull.style.textAlign = "right";
+skull.style.marginLeft = "auto"; // empurra mais pra direita
+skull.style.marginRight = "80px"; // ajusta distância da borda
+skull.style.background = "transparent"; // sem fundo
+skull.style.overflow = "none"; // impede scroll lateral
+skull.style.whiteSpace = "pre"; // mantém o formato
+skull.style.lineHeight = "1.1"; // mantém compacto
+
+// caveira "vazia" (sem blocos █)
+skull.textContent = `
+☣︎ ███████████████████████████  ☣︎
+☣︎ ███████▀▀▀░░░░░░░▀▀▀███████  ☣︎
+☣︎ ████▀░░░░░░░░░░░░░░░░░▀████  ☣︎
+☣︎ ███│░░░░░░░░░░░░░░░░░░░│███  ☣︎
+☣︎ ██▌│░░░░░░░░░░░░░░░░░░░│▐██  ☣︎
+☣︎ ██░└┐░░░░░░░░░░░░░░░░░┌┘░██  ☣︎
+☣︎ ██░░└┐░░░░░░░░░░░░░░░┌┘░░██  ☣︎
+☣︎ ██░░┌┘▄▄▄▄▄░░░░░▄▄▄▄▄└┐░░██  ☣︎
+☣︎ ██▌░│██████▌░░░▐██████│░▐██  ☣︎
+☣︎ ███░│▐███▀▀░░▄░░▀▀███▌│░███  ☣︎
+☣︎ ██▀─┘░░░░░░░▐█▌░░░░░░░└─▀██  ☣︎
+☣︎ ██▄░░░▄▄▄▓░░▀█▀░░▓▄▄▄░░░▄██  ☣︎
+☣︎ ████▄─┘██▌░░░░░░░▐██└─▄████  ☣︎
+☣︎ █████░░▐█─┬┬┬┬┬┬┬─█▌░░█████  ☣︎
+☣︎ ████▌░░░▀┬┼┼┼┼┼┼┼┬▀░░░▐████  ☣︎
+☣︎ █████▄░░░└┴┴┴┴┴┴┴┘░░░▄█████  ☣︎
+☣︎ ███████▄░░░░░░░░░░░▄███████  ☣︎
+☣︎ ██████████▄▄▄▄▄▄▄██████████  ☣︎
+☣︎ ███████████████████████████  ☣︎
   `;
 
   layout.appendChild(msgArea);
@@ -761,7 +886,7 @@ async function triggerShutdown() {
   countdown.style.left = "50%";
   countdown.style.transform = "translateX(-50%)";
   countdown.style.textAlign = "center";
-  countdown.style.fontSize = "20px";
+  countdown.style.fontSize = "18px";
   countdown.style.fontWeight = "bold";
   countdown.style.color = "var(--accent)";
   terminal2.appendChild(countdown);
@@ -781,4 +906,3 @@ async function triggerShutdown() {
 </script>
 </body>
 </html>
-
