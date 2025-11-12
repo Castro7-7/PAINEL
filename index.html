@@ -264,6 +264,18 @@ a{color:var(--accent)}
   background: #d17cff;
 }
 
+.boot-msg {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.boot-msg span {
+  display: inline-block;
+  min-width: 2ch; /* impede a frase de se mover */
+  text-align: center;
+}
+
+
 </style>
 </head>
 <body>
@@ -892,6 +904,42 @@ if (match) {
       return;
     }
   }
+  
+  /* ------------------ UPTIME: dias / horas / minutos / segundos ------------------ */
+/* Substitua qualquer código de uptime anterior por este bloco. */
+
+let serverStartTime = localStorage.getItem('serverStartTime');
+if (!serverStartTime) {
+  serverStartTime = new Date().toISOString();
+  localStorage.setItem('serverStartTime', serverStartTime);
+}
+serverStartTime = new Date(serverStartTime);
+
+function pad(n) { return n.toString().padStart(2, '0'); }
+
+function updateServerUptime() {
+  const now = new Date();
+  let diffMs = now - serverStartTime;
+  if (diffMs < 0) diffMs = 0; // proteção
+
+  const days = Math.floor(diffMs / 86400000); // 24*60*60*1000
+  const hours = Math.floor((diffMs % 86400000) / 3600000);
+  const minutes = Math.floor((diffMs % 3600000) / 60000);
+  const seconds = Math.floor((diffMs % 60000) / 1000);
+
+  // formato: "Servidor online há 2 dias, 04:03:12"
+  const timeStr = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  const dayPart = days > 0 ? `${days} dia${days !== 1 ? 's' : ''}, ` : '';
+  const msg = `Servidor online <strong>há</strong> ${dayPart}${timeStr}`;
+
+  const bootMsg = document.querySelector('.boot-msg');
+  if (bootMsg) bootMsg.innerHTML = msg;
+}
+
+// atualiza imediatamente e depois a cada segundo
+updateServerUptime();
+setInterval(updateServerUptime, 1000);
+
 
   // if logged in, handle numeric selection and other commands
   if(loggedIn){
@@ -1301,6 +1349,46 @@ skull.textContent = `
   // troca direta sem delay pra 404
   window.location.replace("https://httpstat.us/404");
 }
+
+const bootMsg = document.querySelector('.boot-msg');
+
+// Defina aqui o momento em que o "servidor iniciou"
+const startTime = new Date('2025-11-07T09:00:00'); // exemplo
+
+bootMsg.innerHTML = `
+  Servidor online há 
+  <span id="dias"></span>:
+  <span id="horas"></span>:
+  <span id="minutos"></span>:
+  <span id="segundos"></span>:
+  <span id="milissegundos"></span>
+`;
+
+const spanDias = document.getElementById('dias');
+const spanHoras = document.getElementById('horas');
+const spanMinutos = document.getElementById('minutos');
+const spanSegundos = document.getElementById('segundos');
+const spanMS = document.getElementById('milissegundos');
+
+function atualizarTempoReal() {
+  const agora = new Date();
+  const diff = agora - startTime; 
+
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutos = Math.floor((diff / (1000 * 60)) % 60);
+  const segundos = Math.floor((diff / 1000) % 60);
+  const milissegundos = Math.floor((diff % 1000) / 10); 
+
+  spanDias.textContent = dias.toString().padStart(2, '0');
+  spanHoras.textContent = horas.toString().padStart(2, '0');
+  spanMinutos.textContent = minutos.toString().padStart(2, '0');
+  spanSegundos.textContent = segundos.toString().padStart(2, '0');
+  spanMS.textContent = milissegundos.toString().padStart(2, '0');
+}
+
+// Atualiza em tempo real
+setInterval(atualizarTempoReal, 10);
 
 
 /* note: images blocked on file:// — use GitHub Pages or Live Server for full view */
