@@ -272,7 +272,7 @@ a{color:var(--accent)}
   <!-- boot screen -->
   <div id="bootScreen" class="boot-screen">
     <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
-    <div class="boot-msg">Servidor online <strong>há</strong> 11 dias, 39 horas e 12 minutos</div>
+    <div class="boot-msg">Servidor online <strong>há</strong> 16 horas e 39 minutos</div>
     <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
   </div>
 
@@ -1009,11 +1009,14 @@ function revealPresentationFromTerminal(){
   appendLine('Apresentação liberada. Uso das setas ou dock para navegar.');
 }
 
+/* spawn mini windows em cascata (efeito de boot) */
 function spawnMiniWindowsBurst(n) {
   for (let i = 0; i < n; i++) {
-    setTimeout(() => spawnMiniWindow(i), i * 120);
+    // atraso gradual, com leve aleatoriedade pra não parecer robótico
+    setTimeout(() => spawnMiniWindow(i), i * 240 + Math.random() * 120);
   }
 }
+
 
 function spawnMiniWindow(index = 0) {
   const w = document.createElement('div');
