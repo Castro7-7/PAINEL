@@ -24,17 +24,46 @@ a{color:var(--accent)}
 .boot-bar{width:260px;height:8px;background:rgba(255,255,255,0.03);border-radius:6px;overflow:hidden}
 .boot-progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),rgba(142,68,173,0.6));transition:width 700ms ease}
 
-/* Presentation area */
+/* Presentation area (SUBSTITUIR a seção antiga por este bloco) */
 .presentation{position:relative;width:100%;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.slide{position:absolute;inset:0;padding:36px;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(16px) scale(.995);transition:opacity var(--trans),transform var(--trans)}
-.slide.active{opacity:1;transform:translateY(0) scale(1);z-index:2}
-.inner{width:min(1100px,94%);background:linear-gradient(180deg,rgba(0,0,0,0.28),rgba(0,0,0,0.4));border-radius:12px;padding:28px;display:grid;grid-template-columns:1fr 380px;gap:22px;backdrop-filter:blur(6px);box-shadow:0 18px 48px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+/* Layer que vira o "fundo" animado (a imagem da miniatura vai aqui) */
+.stage-bg{
+  position:absolute;
+  inset:0;
+  z-index:1; /* fica atrás dos slides mas acima do fundo preto */
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  transition: opacity 1.2s ease-in-out, filter 1.2s ease-in-out;
+  opacity:0;
+  pointer-events:none;
+  background-color:#000; /* inicio: preto */
+}
+
+/* slides */
+.slide{position:absolute;inset:0;padding:36px;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(16px) scale(.995);transition:opacity var(--trans),transform var(--trans);z-index:2}
+.slide.active{opacity:1;transform:translateY(0) scale(1);z-index:4}
+
+/* inner precisa ficar acima do stage-bg */
+.inner{position:relative; z-index:5; width:min(1100px,94%);background:linear-gradient(180deg,rgba(0,0,0,0.28),rgba(0,0,0,0.4));border-radius:12px;padding:28px;display:grid;grid-template-columns:1fr 380px;gap:22px;backdrop-filter:blur(6px);box-shadow:0 18px 48px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+/* conteúdo */
 .content h1{font-size:36px;margin:0 0 6px}
 .content h2{font-size:20px;margin:0 0 10px;color:rgba(255,255,255,0.95)}
 .content p{font-size:15px;line-height:1.55;margin:0 0 10px;color:#e8e8e8}
-.preview{height:300px;border-radius:8px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.03)}
-.preview .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.32) contrast(1.03)}
-.preview .caption{position:absolute;left:10px;bottom:10px;font-size:12px;color:rgba(255,255,255,0.78);background:rgba(0,0,0,0.22);padding:6px;border-radius:6px}
+
+/* preview (miniatura) — precisa ficar acima do stage-bg */
+.preview{height:300px;border-radius:8px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.03);z-index:6}
+.preview .bg{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:opacity 520ms ease, transform 520ms ease, filter 520ms ease;
+  opacity:1; filter:none; /* miniaturas ficam nítidas por padrão */
+  will-change: transform, opacity;
+}
+.preview .caption{position:absolute;left:10px;bottom:10px;font-size:12px;color:rgba(255,255,255,0.78);background:rgba(0,0,0,0.22);padding:6px;border-radius:6px;z-index:7}
+
+/* (mantive o resto do seu CSS igual — não alterar) */
 
 /* dock - emoji style */
 .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;width:min(900px,94%);height:62px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.01));border-radius:12px;display:flex;align-items:center;justify-content:space-around;padding:6px 10px;z-index:60;border:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(8px)}
@@ -63,11 +92,57 @@ a{color:var(--accent)}
 .term-prompt{color:var(--accent);font-weight:700}
 .term-edit{color:var(--accent);outline:none;border:0;background:transparent;font-family:"Poppins",monospace;font-size:14px;caret-color:var(--fg);min-width:30px}
 
-/* mini windows fixed above terminal */
-.mini-container{position:fixed;left:50%;top:6%;transform:translateX(-50%);display:flex;flex-direction:row;gap:10px;align-items:flex-start;z-index:195;pointer-events:none}
-.mini-window{width:220px;height:120px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);backdrop-filter:blur(6px);opacity:0;transform:translateY(8px) scale(.98);transition:transform 220ms,opacity 220ms;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,0.6);color:var(--fg)}
-.mini-window.show{opacity:1;transform:translateY(0) scale(1)}
-.mini-window .title{font-weight:700;color:var(--accent);margin-bottom:6px;font-size:13px}
+.mini-container {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* estilo igual ao terminal principal, mas reduzido */
+.mini-window {
+  position: absolute;
+  width: 600px;  /* menor que o terminal principal */
+  height: 220px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(12,10,12,0.62), rgba(12,10,12,0.56));
+  border: 1px solid rgba(142,68,173,0.10);
+  box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  color: var(--accent);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 250ms ease, transform 250ms ease;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  font-family: "Poppins", monospace;
+}
+
+.mini-window.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mini-window .title {
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.mini-window .body {
+  flex: 1;
+  overflow: hidden;
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.45;
+}
 
 /* small responsive */
 @media (max-width:980px){
@@ -197,7 +272,7 @@ a{color:var(--accent)}
   <!-- boot screen -->
   <div id="bootScreen" class="boot-screen">
     <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
-    <div class="boot-msg">Servidor online <strong>há</strong> 16 horas e 39 minutos</div>
+    <div class="boot-msg">Servidor online <strong>há</strong> 11 dias, 39 horas e 12 minutos</div>
     <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
   </div>
 
@@ -220,6 +295,7 @@ a{color:var(--accent)}
       font-size: 12px;
       color: rgba(170, 100, 255, 1);
       text-align: end;
+      z-index: 99;
     ">
       Acessado Remotamente de <span style="color:#c77dff;">CD:LinuxDoCastro7</span>
     </div>
@@ -335,7 +411,65 @@ A <strong>Reforma Agrária</strong> é um conjunto amplo de políticas e ações
   </div>
 </section>
 
+<!-- Slide 8 -->
+<section id="s8" class="slide" data-bg="https://images.unsplash.com/photo-1523292562811-8fa7962a78c8?auto=format&fit=crop&w=1200&q=80">
+  <div class="inner">
+    <div class="content">
+      <h2>O papel do INCRA</h2>
+      <p>O <strong>Instituto Nacional de Colonização e Reforma Agrária (INCRA)</strong> é o órgão responsável por planejar, coordenar e executar a reforma agrária no Brasil. Criado em 1970, o INCRA atua na desapropriação de terras improdutivas, na criação de assentamentos rurais e na regularização fundiária de áreas ocupadas por trabalhadores sem terra.</p>
+      <p>Além disso, o instituto também apoia a infraestrutura dos assentamentos, oferecendo crédito, assistência técnica e programas de desenvolvimento social e produtivo.</p>
+    </div>
+    <div class="preview">
+      <div class="bg"></div>
+      <div class="caption">Gestão e regularização fundiária</div>
+    </div>
+  </div>
+</section>
 
+<!-- Slide 9 -->
+<section id="s9" class="slide" data-bg="https://plus.unsplash.com/premium_photo-1674019252235-43ac1eaf75cf?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=464">
+  <div class="inner">
+    <div class="content">
+      <h2>Conflitos no Campo</h2>
+      <p>Os <strong>conflitos agrários</strong> estão entre os maiores desafios da reforma agrária no Brasil. Envolvem disputas por posse e uso da terra entre latifundiários, pequenos agricultores, povos tradicionais e movimentos sociais.</p>
+      <p>Esses conflitos muitas vezes resultam em violência, mortes e violações de direitos humanos, revelando a urgência de políticas mais justas e eficazes de redistribuição de terras e proteção das comunidades rurais.</p>
+    </div>
+    <div class="preview">
+      <div class="bg"></div>
+      <div class="caption">Disputa e resistência</div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 10 -->
+<section id="s10" class="slide" data-bg="https://images.unsplash.com/photo-1598985472190-b4884e7b5ef9?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870">
+  <div class="inner">
+    <div class="content">
+      <h2>Movimentos Sociais</h2>
+      <p>Os <strong>movimentos sociais rurais</strong> desempenham papel fundamental na luta pela reforma agrária. Entre eles, o <strong>MST (Movimento dos Trabalhadores Rurais Sem Terra)</strong> se destaca pela organização de ocupações de terras improdutivas e pela pressão por políticas públicas que promovam justiça e equidade no campo.</p>
+      <p>Esses movimentos não apenas reivindicam o direito à terra, mas também defendem a educação, a agroecologia e o fortalecimento da agricultura familiar.</p>
+    </div>
+    <div class="preview">
+      <div class="bg"></div>
+      <div class="caption">Luta e mobilização</div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 11 -->
+<section id="s11" class="slide" data-bg="https://images.unsplash.com/photo-1647894648597-1e21cd3b0ed4?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=435">
+  <div class="inner">
+    <div class="content">
+      <h2>Por que não deu certo no Brasil?</h2>
+      <p>Apesar de décadas de debate, a <strong>reforma agrária no Brasil</strong> nunca foi plenamente efetivada. Os principais motivos incluem a resistência das elites rurais, a falta de vontade política, a burocracia e o corte de recursos destinados ao INCRA.</p>
+      <p>Além disso, muitos assentamentos sofrem com o abandono do Estado — sem infraestrutura, crédito ou apoio técnico. O resultado é um processo lento, fragmentado e incapaz de resolver as desigualdades históricas na distribuição de terras.</p>
+    </div>
+    <div class="preview">
+      <div class="bg"></div>
+      <div class="caption">Desigualdade persistente</div>
+    </div>
+  </div>
+</section>
  <!-- Slide 7 (Fontes) -->
 <section id="s7" class="slide" data-bg="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80">
   <div class="inner">
@@ -353,7 +487,6 @@ A <strong>Reforma Agrária</strong> é um conjunto amplo de políticas e ações
   </div>
 </section>
 
-
     <!-- dock with emojis -->
     <nav class="dock" aria-label="barra de slides">
       <div class="item active" data-target="s1" title="Introdução"><div class="emoji">🏠</div><div>Intro</div></div>
@@ -362,7 +495,13 @@ A <strong>Reforma Agrária</strong> é um conjunto amplo de políticas e ações
       <div class="item" data-target="s4" title="Histórico"><div class="emoji">📜</div><div>Histórico</div></div>
       <div class="item" data-target="s5" title="Desafios"><div class="emoji">⚖️</div><div>Desafios</div></div>
       <div class="item" data-target="s6" title="Impactos"><div class="emoji">🌱</div><div>Impactos</div></div>
+      <div class="item" data-target="s8" title="INCRA"><div class="emoji">🏢</div><div>INCRA</div></div>
+<div class="item" data-target="s9" title="Conflitos"><div class="emoji">🔥</div><div>Conflitos</div></div>
+<div class="item" data-target="s10" title="Movimentos"><div class="emoji">✊</div><div>Movimentos</div></div>
+<div class="item" data-target="s11" title="Por que não deu certo?"><div class="emoji">❌</div><div>Brasil</div></div>
+
       <div class="item" data-target="s7" title="Fontes"><div class="emoji">🔗</div><div>Fontes</div></div>
+      
     </nav>
 
     <div class="navButtons">
@@ -410,26 +549,111 @@ let loggedIn = false;
 let waitingPassword = false;
 let bootCompleted = false;
 
-/* prepare slide backgrounds */
-slides.forEach(s=>{
+//* --- versão com fade mais suave e natural no fundo --- */
+
+// cria o layer de fundo que receberá a imagem da miniatura ao mudar de slide
+const stageBg = document.createElement('div');
+stageBg.className = 'stage-bg';
+presentation.appendChild(stageBg);
+
+// injeta as miniaturas (preview) sem overlay — ficam nítidas
+slides.forEach((s) => {
   const url = s.dataset.bg;
   const bg = s.querySelector('.preview .bg');
-  if(bg && url) bg.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.36), rgba(0,0,0,0.45)), url('${url}')`;
+  if (bg && url) {
+    bg.style.backgroundImage = `url('${url}')`;
+    bg.style.opacity = '1';
+    bg.style.transform = 'scale(1)';
+    bg.style.filter = 'none';
+  }
 });
 
-/* show slide function */
-function showSlide(i){
-  activeIndex = Math.max(0, Math.min(i, slides.length - 1));
-  slides.forEach((s, idx) => s.classList.toggle('active', idx === activeIndex));
-  dockItems.forEach((it, idx) => it.classList.toggle('active', idx === activeIndex));
+// fundo inicial preto (sem imagem)
+stageBg.style.backgroundImage = '';
+stageBg.style.backgroundColor = '#000';
+stageBg.style.opacity = '1';
+// transição mais lenta e suave
+stageBg.style.transition = 'opacity 1.4s ease-in-out, filter 1.2s ease-in-out';
+
+/* --- showSlide com fade suave --- */
+function showSlide(i) {
+  const prevIndex = activeIndex;
+  const nextIndex = Math.max(0, Math.min(i, slides.length - 1));
+  if (prevIndex === nextIndex) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === nextIndex));
+    dockItems.forEach((it, idx) => it.classList.toggle('active', idx === nextIndex));
+    return;
+  }
+
+  const prevSlide = slides[prevIndex];
+  const nextSlide = slides[nextIndex];
+  const prevUrl = prevSlide ? prevSlide.dataset.bg : null;
+
+  // 1) aplica a imagem anterior no fundo com fade-in longo e suave
+  if (prevUrl) {
+    // começa apagando o fundo atual lentamente
+    stageBg.style.opacity = '0';
+    // troca a imagem após o fade-out parcial
+    setTimeout(() => {
+      stageBg.style.backgroundImage = `url('${prevUrl}')`;
+      stageBg.style.backgroundColor = '';
+      stageBg.style.filter = 'brightness(0.3) contrast(1.05)';
+      // força reflow e volta opacidade suave
+      void stageBg.offsetWidth;
+      stageBg.style.opacity = '1';
+    }, 500); // atraso de 0.6s antes de trocar
+  } else {
+    stageBg.style.backgroundImage = '';
+    stageBg.style.backgroundColor = '#000';
+    stageBg.style.filter = '';
+    stageBg.style.opacity = '1';
+  }
+
+  // 2) anima a miniatura anterior
+  const prevPreview = prevSlide ? prevSlide.querySelector('.preview .bg') : null;
+  if (prevPreview) {
+    prevPreview.style.transition = 'transform 700ms ease, opacity 700ms ease';
+    prevPreview.style.transform = 'translateX(-18px) scale(1.06)';
+    prevPreview.style.opacity = '0';
+  }
+
+  // 3) prepara a miniatura do próximo slide
+  const nextPreview = nextSlide ? nextSlide.querySelector('.preview .bg') : null;
+  if (nextPreview) {
+    nextPreview.style.opacity = '0';
+    nextPreview.style.transform = 'translateX(12px) scale(.98)';
+    nextPreview.style.transition = 'transform 700ms ease, opacity 700ms ease';
+  }
+
+  // 4) troca visual após o delay
+  setTimeout(() => {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === nextIndex));
+    dockItems.forEach((it, idx) => it.classList.toggle('active', idx === nextIndex));
+
+    if (nextPreview) {
+      nextPreview.style.opacity = '1';
+      nextPreview.style.transform = 'translateX(0) scale(1)';
+    }
+
+    if (prevPreview) {
+      setTimeout(() => {
+        prevPreview.style.opacity = '';
+        prevPreview.style.transform = '';
+        prevPreview.style.transition = '';
+      }, 700);
+    }
+
+    activeIndex = nextIndex;
+  }, 300);
 }
 
+
 /* dock clicks */
-dockItems.forEach((it, idx) => it.addEventListener('click', ()=> showSlide(idx)));
+dockItems.forEach((it, idx) => it.addEventListener('click', () => showSlide(idx)));
 
 /* prev / next */
-document.getElementById('prev').addEventListener('click', ()=> showSlide(activeIndex-1));
-document.getElementById('next').addEventListener('click', ()=> showSlide(activeIndex+1));
+document.getElementById('prev').addEventListener('click', () => showSlide(activeIndex - 1));
+document.getElementById('next').addEventListener('click', () => showSlide(activeIndex + 1));
 
 /* keyboard arrows active after boot */
 document.addEventListener('keydown', e=> {
@@ -581,7 +805,6 @@ const SHUTDOWN_COMMANDS = [
   'stop server',
   'fechar server',
   'x',
-  '7',
   'fechar',
   'servidor clear',
   'server clear',
@@ -764,7 +987,7 @@ async function cinematicRevealThenShowSlides(){
     appendLine('> ' + randomHexLine(48));
     await sleep(80 + Math.random()*60);
   }
-  appendLine('Carregando interface de apresentação (simulação)...');
+  appendLine('Carregando interface de apresentação...');
   await sleep(300);
   // hide boot screen if present and show presentation
   revealPresentationFromTerminal();
@@ -786,21 +1009,42 @@ function revealPresentationFromTerminal(){
   appendLine('Apresentação liberada. Uso das setas ou dock para navegar.');
 }
 
-/* spawn mini windows above terminal (fixed positions) */
-function spawnMiniWindow(){
-  const w = document.createElement('div');
-  w.className = 'mini-window';
-  w.innerHTML = '<div class="title">SYS</div><div style="opacity:0.92;font-size:12px">acesso /var/logs/' + Math.floor(Math.random()*9000) + '</div><div style="margin-top:8px;font-size:11px;opacity:0.85">' + randomHexLine(36) + '</div>';
-  miniContainer.appendChild(w);
-  requestAnimationFrame(()=> w.classList.add('show'));
-  setTimeout(()=> { w.classList.remove('show'); setTimeout(()=> w.remove(), 260); }, 500 + Math.random()*900);
-}
-
-function spawnMiniWindowsBurst(n){
-  for(let i=0;i<n;i++){
-    setTimeout(spawnMiniWindow, i*110 + Math.random()*90);
+function spawnMiniWindowsBurst(n) {
+  for (let i = 0; i < n; i++) {
+    setTimeout(() => spawnMiniWindow(i), i * 120);
   }
 }
+
+function spawnMiniWindow(index = 0) {
+  const w = document.createElement('div');
+  w.className = 'mini-window';
+  const offset = index * 14; // deslocamento diagonal
+  w.style.left = `calc(50% + ${offset}px)`;
+  w.style.top = `calc(50% + ${offset}px)`;
+  w.style.transform = 'translate(-50%, -50%) scale(0.96)';
+
+  w.innerHTML = `
+    <div class="title">SYS</div>
+    <div style="opacity:0.9;font-size:12px">
+      acesso /var/logs/${Math.floor(Math.random() * 9000)}
+    </div>
+    <div style="margin-top:8px;font-size:11px;opacity:0.85">
+      ${randomHexLine(36)}
+    </div>
+  `;
+
+  miniContainer.appendChild(w);
+
+  // Animação de entrada
+  requestAnimationFrame(() => w.classList.add('show'));
+
+  // Desaparecer automaticamente
+  setTimeout(() => {
+    w.classList.remove('show');
+    setTimeout(() => w.remove(), 250);
+  }, 900 + Math.random() * 300);
+}
+
 
 /* random hex helper */
 function randomHexLine(len=48){
