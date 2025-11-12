@@ -269,12 +269,13 @@ a{color:var(--accent)}
 <body>
 <div class="stage">
 
-  <!-- boot screen -->
-  <div id="bootScreen" class="boot-screen">
-    <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
-    <div class="boot-msg">Servidor online <strong>há</strong> 16 horas e 39 minutos</div>
-    <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
-  </div>
+ <!-- boot screen -->
+<div id="bootScreen" class="boot-screen">
+  <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
+  <div id="bootMsg" class="boot-msg">Servidor online <strong>há</strong> —</div>
+  <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
+</div>
+
 
  <!-- presentation main (hidden until boot) -->
   <div id="presentation" class="presentation" aria-hidden="true">
@@ -646,6 +647,30 @@ function showSlide(i) {
     activeIndex = nextIndex;
   }, 300);
 }
+
+	/* --- contador de uptime (servidor online há X dias, Y horas, Z minutos) --- */
+
+// Defina aqui a data em que o "servidor" foi iniciado
+const serverStartDate = new Date("2025-10-28T08:00:00"); // <-- altere para a data real de início
+
+function updateUptime() {
+  const now = new Date();
+  const diffMs = now - serverStartDate;
+
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+  const bootMsg = document.getElementById("bootMsg");
+  if (bootMsg) {
+    bootMsg.innerHTML = `Servidor online <strong>há</strong> ${days} dia${days !== 1 ? 's' : ''}, ${hours} hora${hours !== 1 ? 's' : ''} e ${minutes} minuto${minutes !== 1 ? 's' : ''}`;
+  }
+}
+
+// Atualiza ao carregar e a cada minuto
+updateUptime();
+setInterval(updateUptime, 60000);
+
 
 
 /* dock clicks */
@@ -1199,5 +1224,6 @@ skull.textContent = `
 </script>
 </body>
 </html>
+
 
 
