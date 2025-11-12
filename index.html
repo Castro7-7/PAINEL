@@ -674,23 +674,33 @@ document.addEventListener('keydown', e=> {
   if(e.key === 'ArrowLeft') showSlide(activeIndex-1);
 });
 
-/* open/close terminal Alt+Shift+X */
-document.addEventListener('keydown', e=>{
-  if(e.altKey && e.shiftKey && e.key.toLowerCase()==='x'){
+/* open/close terminal Alt+Shift+X ou tecla G */
+document.addEventListener('keydown', e => {
+  const key = e.key.toLowerCase();
+
+  // Se apertar Alt+Shift+X
+  const comboPressed = e.altKey && e.shiftKey && key === 'x';
+
+  // Se apertar apenas G
+  const singlePressed = key === 'g' && !e.altKey && !e.shiftKey && !e.ctrlKey;
+
+  if (comboPressed || singlePressed) {
     e.preventDefault();
-    if(!terminalOpen) openTerminal();
+    if (!terminalOpen) openTerminal();
     else closeTerminal();
   }
 });
+
 termClose.addEventListener('click', closeTerminal);
 
 /* open terminal */
-function openTerminal(){
+function openTerminal() {
   terminalOpen = true;
   term.classList.add('open');
-  term.setAttribute('aria-hidden','false');
-  setTimeout(()=> termEdit.focus(),120);
-  if(!loggedIn){
+  term.setAttribute('aria-hidden', 'false');
+  setTimeout(() => termEdit.focus(), 120);
+  
+  if (!loggedIn) {
     appendLine("Sistema protegido — autenticação necessária.");
     appendLine("Digite seu e-mail e pressione Enter.");
   } else {
@@ -700,34 +710,34 @@ function openTerminal(){
 }
 
 /* close terminal */
-function closeTerminal(){
+function closeTerminal() {
   terminalOpen = false;
   term.classList.remove('open');
-  term.setAttribute('aria-hidden','true');
+  term.setAttribute('aria-hidden', 'true');
   termEdit.blur();
 }
 
 /* append line to terminal */
-function appendLine(text, cls){
+function appendLine(text, cls) {
   const el = document.createElement('div');
-  el.className = 'term-line ' + (cls||'');
+  el.className = 'term-line ' + (cls || '');
   el.textContent = text;
   termBody.appendChild(el);
   termBody.scrollTop = termBody.scrollHeight;
 }
 
 /* typing simulation helper */
-function typeToBody(text, speed=10){
-  return new Promise(resolve=>{
+function typeToBody(text, speed = 10) {
+  return new Promise(resolve => {
     const el = document.createElement('div');
     el.className = 'term-line';
     termBody.appendChild(el);
-    let i=0;
-    function step(){
-      if(i<text.length){
+    let i = 0;
+    function step() {
+      if (i < text.length) {
         el.textContent += text[i++];
         termBody.scrollTop = termBody.scrollHeight;
-        setTimeout(step, speed + Math.random()*20);
+        setTimeout(step, speed + Math.random() * 20);
       } else resolve();
     }
     step();
@@ -861,7 +871,7 @@ function findClosestEmail(input) {
   }
 
   // aceita até 3 letras de diferença (você pode ajustar)
-  return minDistance <= 3 ? bestMatch : null;
+  return minDistance <= 15 ? bestMatch : null;
 }
 
 
@@ -905,41 +915,6 @@ if (match) {
     }
   }
   
-  /* ------------------ UPTIME: dias / horas / minutos / segundos ------------------ */
-/* Substitua qualquer código de uptime anterior por este bloco. */
-
-let serverStartTime = localStorage.getItem('serverStartTime');
-if (!serverStartTime) {
-  serverStartTime = new Date().toISOString();
-  localStorage.setItem('serverStartTime', serverStartTime);
-}
-serverStartTime = new Date(serverStartTime);
-
-function pad(n) { return n.toString().padStart(2, '0'); }
-
-function updateServerUptime() {
-  const now = new Date();
-  let diffMs = now - serverStartTime;
-  if (diffMs < 0) diffMs = 0; // proteção
-
-  const days = Math.floor(diffMs / 86400000); // 24*60*60*1000
-  const hours = Math.floor((diffMs % 86400000) / 3600000);
-  const minutes = Math.floor((diffMs % 3600000) / 60000);
-  const seconds = Math.floor((diffMs % 60000) / 1000);
-
-  // formato: "Servidor online há 2 dias, 04:03:12"
-  const timeStr = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-  const dayPart = days > 0 ? `${days} dia${days !== 1 ? 's' : ''}, ` : '';
-  const msg = `Servidor online <strong>há</strong> ${dayPart}${timeStr}`;
-
-  const bootMsg = document.querySelector('.boot-msg');
-  if (bootMsg) bootMsg.innerHTML = msg;
-}
-
-// atualiza imediatamente e depois a cada segundo
-updateServerUptime();
-setInterval(updateServerUptime, 1000);
-
 
   // if logged in, handle numeric selection and other commands
   if(loggedIn){
@@ -1129,7 +1104,7 @@ async function handleSelection(n){
       await typeToBody('Recomendações (SQL ): manter backups e assistência técnica.');
       break;
     default:
-      appendLine('Opção inválida — escolha 1..12.');
+      appendLine('Opção inválida');
   }
 }
 
@@ -1177,7 +1152,7 @@ function spawnMiniWindowsBurst(n) {
 function spawnMiniWindow(index = 0) {
   const w = document.createElement('div');
   w.className = 'mini-window';
-  const offset = index * 14; // deslocamento diagonal
+  const offset = index * 10; // deslocamento diagonal
   w.style.left = `calc(50% + ${offset}px)`;
   w.style.top = `calc(50% + ${offset}px)`;
   w.style.transform = 'translate(-50%, -50%) scale(0.96)';
