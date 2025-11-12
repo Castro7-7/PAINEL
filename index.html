@@ -269,13 +269,12 @@ a{color:var(--accent)}
 <body>
 <div class="stage">
 
- <!-- boot screen -->
-<div id="bootScreen" class="boot-screen">
-  <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
-  <div id="bootMsg" class="boot-msg">Servidor online <strong>há</strong> —</div>
-  <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
-</div>
-
+  <!-- boot screen -->
+  <div id="bootScreen" class="boot-screen">
+    <div style="font-weight:700;font-size:20px;color:var(--accent)">PAINEL</div>
+    <div class="boot-msg">Servidor online <strong>há</strong> 16 horas e 39 minutos</div>
+    <div class="boot-bar"><div id="bootBar" class="boot-progress"></div></div>
+  </div>
 
  <!-- presentation main (hidden until boot) -->
   <div id="presentation" class="presentation" aria-hidden="true">
@@ -648,30 +647,6 @@ function showSlide(i) {
   }, 300);
 }
 
-	/* --- contador de uptime (servidor online há X dias, Y horas, Z minutos) --- */
-
-// Defina aqui a data em que o "servidor" foi iniciado
-const serverStartDate = new Date("2025-10-28T08:00:00"); // <-- altere para a data real de início
-
-function updateUptime() {
-  const now = new Date();
-  const diffMs = now - serverStartDate;
-
-  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
-
-  const bootMsg = document.getElementById("bootMsg");
-  if (bootMsg) {
-    bootMsg.innerHTML = `Servidor online <strong>há</strong> ${days} dia${days !== 1 ? 's' : ''}, ${hours} hora${hours !== 1 ? 's' : ''} e ${minutes} minuto${minutes !== 1 ? 's' : ''}`;
-  }
-}
-
-// Atualiza ao carregar e a cada minuto
-updateUptime();
-setInterval(updateUptime, 60000);
-
-
 
 /* dock clicks */
 dockItems.forEach((it, idx) => it.addEventListener('click', () => showSlide(idx)));
@@ -747,24 +722,97 @@ function typeToBody(text, speed=10){
   });
 }
 
-/* process Enter on contenteditable */
-termEdit.addEventListener('keydown', async (ev)=>{
-  if(ev.key === 'Enter'){
+/* ======== NOVA FUNÇÃO: DIGITAÇÃO DE SENHA OCULTA ======== */
+
+const _symbolSet = ['!', '@', '#', '$', '%', '¨', '&', '*', '/', '?', '°', '£', '¢', '¬', '₢'];
+let _hiddenInput = '';        // guarda a senha real
+let _maskingActive = false;   // indica se o modo senha está ativo
+
+function _setCursorToEnd(el) {
+  try {
+    const sel = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } catch(e){}
+}
+
+/* bloqueia colar quando estiver digitando senha */
+termEdit.addEventListener('paste', (ev)=>{
+  if(typeof waitingPassword !== 'undefined' && waitingPassword && !loggedIn){
     ev.preventDefault();
-    const raw = termEdit.innerText.trim();
-    termEdit.innerText = '';
-    if(!raw) return;
-    appendLine('> ' + raw, 'usercmd');
-    await processCommand(raw);
-  } else if(ev.key === 'Tab'){
-    ev.preventDefault();
-    document.execCommand('insertText', false, '  ');
   }
 });
 
-/* Login credentials (from you) */
+/* process Enter on contenteditable */
+termEdit.addEventListener('keydown', async (ev)=>{
+  const isWaitingPassword = (typeof waitingPassword !== 'undefined' && waitingPassword);
+  const isLoggedIn = (typeof loggedIn !== 'undefined' && loggedIn);
+
+  // ENTER → envia comando
+  if(ev.key === 'Enter'){
+    ev.preventDefault();
+    let raw;
+    if(_maskingActive && isWaitingPassword && !isLoggedIn){
+      raw = _hiddenInput || '';
+    } else {
+      raw = termEdit.innerText.trim();
+    }
+    termEdit.innerText = '';
+    _hiddenInput = '';
+    _maskingActive = false;
+    if(!raw) return;
+
+    // se for senha, não mostrar a real
+    if(isWaitingPassword && !isLoggedIn){
+      appendLine('> ( OCULTO )', 'usercmd');
+    } else {
+      appendLine('> ' + raw, 'usercmd');
+    }
+
+    await processCommand(raw);
+    return;
+  }
+
+  // TAB → mantém comportamento padrão
+  if(ev.key === 'Tab'){
+    ev.preventDefault();
+    document.execCommand('insertText', false, '  ');
+    return;
+  }
+
+  // se está aguardando senha → mascara a digitação
+  if(isWaitingPassword && !isLoggedIn){
+    ev.preventDefault();
+    _maskingActive = true;
+
+    // BACKSPACE → apaga último caractere
+    if(ev.key === 'Backspace'){
+      _hiddenInput = _hiddenInput.slice(0, -1);
+      termEdit.innerText = termEdit.innerText.slice(0, -1);
+      _setCursorToEnd(termEdit);
+      return;
+    }
+
+    // ignora teclas de controle
+    if(ev.key.length !== 1) return;
+
+    // adiciona símbolo aleatório e guarda real
+    _hiddenInput += ev.key;
+    const randomSymbol = _symbolSet[Math.floor(Math.random()*_symbolSet.length)];
+    termEdit.innerText += randomSymbol;
+    _setCursorToEnd(termEdit);
+    return;
+  }
+});
+
+
+/* ======== LOGIN ======== */
+
 const USERS = {
-  'dudaducati07@gmail.com': 'dudaducati007',
+  'dudaducati07@gmail.com': '010071',
   'castrovip7@email.com': 'castrovip7',
   '7': '7'
 };
@@ -772,43 +820,41 @@ const USERS = {
 let currentEmail = null;
 let serverRunning = true;
 
-
 /* Process commands */
 async function processCommand(cmd){
   const lower = cmd.trim();
 
   if(!loggedIn && !waitingPassword){
-  // first input should be email
-  if(USERS.hasOwnProperty(lower)){
-    appendLine('E-mail reconhecido. Informe a senha:');
-    waitingPassword = true;
-    currentEmail = lower; // guarda o e-mail atual
-  } else {
-    appendLine('E-mail não reconhecido. Tente novamente.');
+    // primeiro input = e-mail
+    if(USERS.hasOwnProperty(lower)){
+      appendLine('E-mail reconhecido. Informe a senha:');
+      waitingPassword = true;
+      currentEmail = lower;
+    } else {
+      appendLine('E-mail não reconhecido. Tente novamente.');
+    }
+    return;
   }
-  return;
-}
 
-if(waitingPassword && !loggedIn){
-  // treat as password
-  const expected = USERS[currentEmail];
-  if(lower === expected){
-    appendLine('Verificando credenciais...', 'info');
-    await sleep(600);
-    appendLine('Acesso autorizado. Painel inicializando...', 'ok');
-    loggedIn = true;
-    waitingPassword = false;
-    currentEmail = null;
-    await sleep(400);
-    showMenu();
-    return;
-  } else {
-    appendLine('Senha incorreta. Tente novamente.');
-    waitingPassword = false;
-    currentEmail = null;
-    return;
+  if(waitingPassword && !loggedIn){
+    const expected = USERS[currentEmail];
+    if(lower === expected){
+      appendLine('Verificando credenciais...', 'info');
+      await sleep(600);
+      appendLine('Acesso autorizado. Painel inicializando...', 'ok');
+      loggedIn = true;
+      waitingPassword = false;
+      currentEmail = null;
+      await sleep(400);
+      showMenu();
+      return;
+    } else {
+      appendLine('Senha incorreta. Tente novamente.');
+      waitingPassword = false;
+      currentEmail = null;
+      return;
+    }
   }
-}
 
   // if logged in, handle numeric selection and other commands
   if(loggedIn){
@@ -1224,6 +1270,5 @@ skull.textContent = `
 </script>
 </body>
 </html>
-
 
 
