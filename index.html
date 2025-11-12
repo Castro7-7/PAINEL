@@ -811,11 +811,47 @@ termEdit.addEventListener('keydown', async (ev)=>{
 
 /* ======== LOGIN ======== */
 
+// Função para calcular a distância de Levenshtein
+function levenshtein(a, b) {
+  const dp = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,      // remoção
+        dp[i][j - 1] + 1,      // inserção
+        dp[i - 1][j - 1] + cost // substituição
+      );
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+// Lista real de usuários válidos
 const USERS = {
-  'dudaducati07@gmail.com': '010071',
-  'castrovip7@email.com': 'castrovip7',
-  '7': '7'
+  'dudaducati07@gmail.com': '010071'
 };
+
+// Verifica se um e-mail é "parecido o bastante"
+function findClosestEmail(input) {
+  const emails = Object.keys(USERS);
+  let bestMatch = null;
+  let minDistance = Infinity;
+  
+  for (const email of emails) {
+    const dist = levenshtein(input, email);
+    if (dist < minDistance) {
+      minDistance = dist;
+      bestMatch = email;
+    }
+  }
+
+  // aceita até 3 letras de diferença (você pode ajustar)
+  return minDistance <= 3 ? bestMatch : null;
+}
+
 
 let currentEmail = null;
 let serverRunning = true;
@@ -826,12 +862,13 @@ async function processCommand(cmd){
 
   if(!loggedIn && !waitingPassword){
     // primeiro input = e-mail
-    if(USERS.hasOwnProperty(lower)){
-      appendLine('E-mail reconhecido. Informe a senha:');
-      waitingPassword = true;
-      currentEmail = lower;
-    } else {
-      appendLine('E-mail não reconhecido. Tente novamente.');
+    const match = findClosestEmail(lower);
+if (match) {
+  appendLine('E-mail reconhecido. Informe a senha:');
+  waitingPassword = true;
+  currentEmail = match; // usa o e-mail real correspondente
+} else {
+  appendLine('E-mail não reconhecido. Tente novamente.');
     }
     return;
   }
@@ -902,7 +939,7 @@ if (SHUTDOWN_COMMANDS.includes(lower)) {
 }
 
 
-    appendLine("Comando desconhecido. Digite um número de 1 a 12 (ou 'menu').");
+    appendLine("Comando desconhecido. digite (-sudohelp ou 'menu').");
     return;
   }
 }
