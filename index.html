@@ -682,7 +682,7 @@ document.addEventListener('keydown', e => {
   const comboPressed = e.altKey && e.shiftKey && key === 'x';
 
   // Se apertar apenas G
-  const singlePressed = key === 'g' && !e.altKey && !e.shiftKey && !e.ctrlKey;
+  const singlePressed = key === 'z' && !e.altKey && !e.shiftKey && !e.ctrlKey;
 
   if (comboPressed || singlePressed) {
     e.preventDefault();
@@ -1370,5 +1370,6 @@ setInterval(atualizarTempoReal, 10);
 </script>
 </body>
 </html>
+
 
 
