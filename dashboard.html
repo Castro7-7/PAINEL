@@ -6,7 +6,7 @@
     <title>Cakto - Dashboard Mobile</title>
     <style>
         .icon {
-            width: 24px;   /* Aumentado para ícones maiores */
+            width: 24px;
             height: auto;
             display: block;
         }
@@ -18,12 +18,13 @@
             font-family: 'roboto', gobold, sans-serif;
             background: linear-gradient(to bottom, #1a2a2b 30%, #0e4634 90%, #11503c 100%);
             color: #ffffff;
-            font-size: 14px;  /* Aumentado para fonte base maior */
+            font-size: 14px;
+            overflow-x: hidden;  /* Adicionado para prevenir overflow horizontal */
         }
 
         header { 
             color: #828f94;
-            padding: 10px 20px;  /* Aumentado padding para mais espaço */
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,72 +40,75 @@
         }
 
         .profile-circle {
-            width: 35px;  /* Aumentado */
-            height: 35px;  /* Aumentado */
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             background-color: #00a651;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;  /* Aumentado */
+            font-size: 15px;
             font-weight: bold;
-            margin-right: 15px;  /* Aumentado */
+            margin-right: 15px;
             cursor: pointer;
         }
 
         .notifications {
             position: absolute;
-            top: 70px;  /* Ajustado devido ao header maior */
-            right: 20px;  /* Aumentado */
+            top: 70px;
+            right: 20px;
             background: #ffffff;
             border: 1px solid #dddddd;
             border-radius: 8px;
-            padding: 15px;  /* Aumentado */
-            width: 280px;  /* Aumentado */
+            padding: 15px;
+            width: 280px;
             display: none;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .notification-item {
-            padding: 8px 0;  /* Aumentado */
+            padding: 8px 0;
             border-bottom: 1px solid #eeeeee;
             color: #333;
         }
 
         .container {
-            margin-top: 50px;  /* Aumentado devido ao header maior */
-            padding: 20px;  /* Aumentado para mais espaço */
+            margin-top: 50px;
+            padding: 20px;
             width: 100%;
+            max-width: 100%;  /* Garantido para não exceder */
+            margin: 50px auto 0;  /* Centralizado */
             box-sizing: border-box;
         }
 
         .faturamento {
             width: 100%;
-            margin-right: 0;
+            max-width: 100%;  /* Garantido para não exceder */
+            margin: 0 auto;  /* Centralizado */
             background: rgba(50, 53, 62, 0.45);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 10px;
-            padding: 25px;  /* Aumentado para ocupar mais */
-            margin-bottom: 20px;  /* Aumentado */
+            padding: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 10px;  /* Aumentado */
-            min-height: 120px;  /* Adicionado para mais altura */
+            gap: 10px;
+            min-height: 120px;
         }
 
         .faturamento-left {
             display: flex;
             align-items: center;
-            gap: 15px;  /* Aumentado */
+            gap: 15px;
         }
 
         .cacto-ouro {
-            width: 35px;  /* Aumentado */
-            height: 35px;  /* Aumentado */
+            width: 35px;
+            height: 35px;
             background: radial-gradient(circle, #f0efeb 20%, #d8bd93 55%, #a97218 100%);
             -webkit-mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
             mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
@@ -117,12 +121,12 @@
         }
 
         .faturamento-left img {
-            font-size: 32px;  /* Aumentado */
+            font-size: 32px;
             color: #00a651;
         }
 
         .faturamento-text {
-            font-size: 18px;  /* Aumentado */
+            font-size: 18px;
             font-weight: bold;
             color: #596467;
             font-family: kenyan-coffee-names, sans-serif;
@@ -130,20 +134,20 @@
         }
 
         .faturamento-value {
-            font-size: 16px;  /* Aumentado */
+            font-size: 16px;
             color: #f1eeee;
             font-family: kenyan-coffee-names, sans-serif;
             font-weight: 500;
-            margin-top: 10px;  /* Aumentado */
+            margin-top: 10px;
         }
 
         .progress-bar {
-            width: 100%;  /* Expandido */
-            height: 10px;  /* Aumentado */
+            width: 100%;
+            height: 10px;
             background: rgba(255,255,255,0.3);
             border-radius: 4px;
-            margin-top: 5px;  /* Aumentado */
-            margin-left: 0;  /* Centralizado */
+            margin-top: 5px;
+            margin-left: 0;
             overflow: hidden;
         }
 
@@ -156,10 +160,12 @@
 
         .balances {
             width: 100%;
+            max-width: 100%;  /* Garantido para não exceder */
+            margin: 0 auto;  /* Centralizado */
             height: auto;
             display: flex;
-            gap: 10px;  /* Aumentado */
-            margin-bottom: 10px;  /* Aumentado */
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .balance-box { 
@@ -169,70 +175,70 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 10px;
-            padding: 20px;  /* Aumentado */
+            padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             position: relative;
             flex-direction: column;
-            min-height: 100px;  /* Adicionado para mais altura */
+            min-height: 100px;
         }
 
         .balance-title {
-            font-size: 15px;  /* Aumentado */
+            font-size: 15px;
             color: #666666;
-            margin-bottom: 8px;  /* Aumentado */
+            margin-bottom: 8px;
         }
 
         .balance-value {
-            font-size: 16px;  /* Aumentado */
+            font-size: 16px;
             font-weight: bold;
             color: #f7f8f8; 
-            margin-top: 15px;  /* Aumentado */
+            margin-top: 15px;
         }
 
         .balance-btn {
             position: absolute;
-            bottom: 5px;  /* Ajustado */
-            right: 5px;  /* Ajustado */
+            bottom: 5px;
+            right: 5px;
             background-color: #00a068;
             color: white;
             border: none;
             border-radius: 10px 0px;
-            padding: 8px 18px;  /* Aumentado */
-            font-size: 14px;  /* Aumentado */
+            padding: 8px 18px;
+            font-size: 14px;
             cursor: pointer;
         }
 
         .topics {
             display: flex;
             flex-direction: column;
-            gap: 15px;  /* Aumentado */
+            gap: 15px;
             width: 100%;
-            margin: 0 auto;
-            margin-top: 15px;  /* Aumentado */
+            max-width: 100%;  /* Garantido para não exceder */
+            margin: 15px auto 0;  /* Centralizado */
         }
 
         .topic {
             width: 100%;
-            padding: 15px;  /* Levemente aumentado (era 12px) para tópicos um pouco maiores */
+            padding: 15px;
             background: rgba(50, 53, 62, 0.60);
             border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;  /* Aumentado */
+            gap: 12px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.25);
             cursor: pointer;
             backdrop-filter: blur(12px);
-            min-height: 50px;  /* Adicionado para mais altura */
+            min-height: 50px;
         }
 
         .topic img {
-            width: 24px;  /* Aumentado */
-            height: 24px;  /* Aumentado */
+            width: 24px;
+            height: 24px;
             filter: brightness(0) saturate(100%) invert(42%) sepia(87%) saturate(747%) hue-rotate(110deg) brightness(96%) contrast(92%);
         }
 
         .topic span {
-            font-size: 16px;  /* Levemente aumentado (era 15px) para tópicos um pouco maiores */
+            font-size: 16px;
             color: #f2f2f2;
             font-weight: 300;
         }
@@ -242,16 +248,16 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             position: fixed;
-            bottom: 25px;  /* Aumentado */
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            width: 95%;  /* Aumentado para ocupar mais */
-            max-width: 450px;  /* Aumentado */
+            width: 98%;  /* Aumentado para ocupar mais a parte inferior */
+            max-width: 480px;  /* Aumentado */
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 15px 0;  /* Aumentado */
-            border-radius: 25px;  /* Aumentado */
+            padding: 15px 0;
+            border-radius: 25px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
             z-index: 999;
         }
@@ -260,12 +266,12 @@
             text-decoration: none;
             color: #cccccc;
             text-align: center;
-            font-size: 14px;  /* Aumentado */
+            font-size: 14px;
             cursor: pointer;
         }
 
         footer img {
-            width: 26px;  /* Aumentado */
+            width: 26px;
             height: auto;
             display: block;
         }
@@ -290,10 +296,10 @@
         .edit-modal-content {
             background: #ffffff;
             border: 1px solid #dddddd;
-            padding: 25px;  /* Aumentado */
+            padding: 25px;
             border-radius: 10px;
-            width: 85%;  /* Aumentado */
-            max-width: 420px;  /* Aumentado */
+            width: 85%;
+            max-width: 420px;
             color: #333;
         }
 
@@ -301,7 +307,7 @@
             background-color: #00a651;
             color: white;
             border: none;
-            padding: 12px;  /* Aumentado */
+            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
@@ -312,12 +318,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: -25px;  /* Aumentado */
+            margin-top: -25px;
         }
 
         .cakto-circle {
-            width: 55px;  /* Aumentado */
-            height: 55px;  /* Aumentado */
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             background: rgba(0, 166, 81, 1);
             backdrop-filter: blur(6px);
@@ -328,20 +334,20 @@
         }
 
         .cakto-circle img {
-            width: 32px;  /* Aumentado */
-            height: 32px;  /* Aumentado */
+            width: 32px;
+            height: 32px;
         }
 
         .header-icons {
             display: flex;
-            gap: 18px;  /* Aumentado */
-            margin-right: 80px;  /* Aumentado */
+            gap: 18px;
+            margin-right: 80px;
         }
 
         /* Media Query para Mobile (telas até 768px) */
         @media (max-width: 768px) {
             body {
-                font-size: 16px;  /* Ainda maior em mobile */
+                font-size: 16px;
             }
             .icon {
                 width: 26px;
@@ -350,25 +356,26 @@
                 width: 28px;
             }
             .balance-box {
-                padding: 25px;  /* Mais espaço */
-                min-height: 120px;  /* Mais altura */
+                padding: 25px;
+                min-height: 120px;
             }
             .balance-title, .balance-value {
-                font-size: 18px;  /* Maiores */
+                font-size: 18px;
             }
             .topic span {
-                font-size: 17px;  /* Levemente maior para tópicos */
+                font-size: 17px;
             }
             .faturamento-text, .faturamento-value {
                 font-size: 18px;
             }
             .progress-bar {
-                height: 12px;  /* Mais alta */
+                height: 12px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- O HTML permanece igual -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&family=Poppins:wght@100;200&family=Raleway:wght@100;200&display=swap" rel="stylesheet">
     <header>
         <div class="profile">
@@ -451,4 +458,40 @@
                 </div>
             </a>
             <a href="#wallet">
-                <img src="https://img.icons8.com/ios-glyphs/30/ffffff/wallet.png"
+                <img src="https://img.icons8.com/ios-glyphs/30/ffffff/wallet.png" class="icon">
+            </a>
+            <a href="#market">
+                <img src="https://img.icons8.com/ios-glyphs/30/ffffff/shopaholic.png" class="icon">
+            </a>
+        </footer>
+
+        <div class="edit-modal" id="editModal">
+            <div class="edit-modal-content">
+                <h3>Editar Valores</h3>
+                <label>Inicial da Conta:</label>
+                <input type="text" id="editInitial" value="D">
+                <label>Nome da Conta:</label>
+                <input type="text" id="editName" value="Nome da Conta">
+                <label>Faturamento Atual:</label>
+                <input type="text" id="editFaturamentoCurrent" value="0">
+                <label>Faturamento Meta:</label>
+                <input type="text" id="editFaturamentoGoal" value="10k">
+                <label>Saldo Disponível:</label>
+                <input type="text" id="editSaldoDisponivel" value="0,00">
+                <label>Saldo Pendente:</label>
+                <input type="text" id="editSaldoPendente" value="0,00">
+                <button onclick="saveEdits()">Salvar</button>
+            </div>
+        </div>
+
+        <script>
+            function toggleNotifications() {
+                const notif = document.getElementById('notifications');
+                notif.style.display = notif.style.display === 'block' ? 'none' : 'block';
+            }
+
+            function toggleVisibility() {
+                const elem = document.documentElement;
+                if (!document.fullscreenElement) {
+                    elem.requestFullscreen().catch(err => {
+                        console.log("Erro ao ativ
