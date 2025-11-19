@@ -732,9 +732,8 @@
             document.addEventListener('touchend', function(e) {
                 if (isPulling) {
                     if (pullDistance > pullThreshold) {
-                        // Refresh the page while keeping fullscreen
-                        localStorage.setItem('fullscreenEnabled', 'true');
-                        location.reload();
+                        // Internal refresh: update numbers and progress bar with animation
+                        loadFromStorage();
                     } else {
                         // Hide indicator
                         pullIndicator.style.display = 'none';
