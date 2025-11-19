@@ -22,7 +22,7 @@
             overflow-x: hidden;
         }
 
-        header { 
+        header {
             color: #828f94;
             padding: 10px 20px;
             display: flex;
@@ -32,6 +32,7 @@
             top: 0;
             width: 100%;
             z-index: 1000;
+            overflow: hidden;
         }
 
         .profile {
@@ -75,7 +76,7 @@
 
         .container {
             margin-top: 50px;
-            padding: 20px 15px;  /* 15px nas laterais para margem */
+            padding: 20px 3px;  /* 15px nas laterais para margem */
             width: 100%;
             max-width: 100%;
             margin: 50px auto 0;
@@ -83,7 +84,8 @@
         }
 
         .faturamento {
-            width: 100%;
+            width: 100;
+            height: 200px;
             max-width: 100%;
             margin: 0 auto;
             background: rgba(50, 53, 62, 0.45);
@@ -108,8 +110,8 @@
         }
 
         .cacto-ouro {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
             background: radial-gradient(circle, #f0efeb 20%, #d8bd93 55%, #a97218 100%);
             -webkit-mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
             mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
@@ -119,6 +121,7 @@
             mask-position: center;
             -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
+             margin-top: 70px;
         }
 
         .faturamento-left img {
@@ -132,23 +135,24 @@
             color: #596467;
             font-family: kenyan-coffee-names, sans-serif;
             font-weight: 250;
+             margin-top: 1px;
         }
 
         .faturamento-value {
             font-size: 16px;
             color: #f1eeee;
             font-family: kenyan-coffee-names, sans-serif;
-            font-weight: 500;
-            margin-top: 10px;
+            font-weight: 900;
+            margin-top: 7px;
         }
 
         .progress-bar {
-            width: 100%;
+            width: 90%;
             height: 10px;
             background: rgba(255,255,255,0.3);
             border-radius: 4px;
-            margin-top: 5px;
-            margin-left: 0;
+           
+            margin-left: 60px;
             overflow: hidden;
         }
 
@@ -193,7 +197,8 @@
             font-size: 16px;
             font-weight: bold;
             color: #f7f8f8; 
-            margin-top: 15px;
+            margin-top: 7px;
+            font-weight: 900;
         }
 
         .balance-btn {
@@ -212,10 +217,10 @@
         .topics {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
             width: 100%;
             max-width: 100%;
-            margin: 15px auto 0;
+            margin: 15px 3px;
         }
 
         .topic {
@@ -230,6 +235,7 @@
             cursor: pointer;
             backdrop-filter: blur(12px);
             min-height: 50px;
+            box-sizing: border-box;
         }
 
         .topic img {
@@ -294,23 +300,57 @@
         }
 
         .edit-modal-content {
-            background: #ffffff;
-            border: 1px solid #dddddd;
-            padding: 25px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 2px solid rgba(0, 166, 81, 0.3);
+            padding: 30px;
+            border-radius: 15px;
             width: 85%;
-            max-width: 420px;
+            max-width: 450px;
             color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-modal-content h3 {
+            margin-top: 0;
+            color: #00a651;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .edit-modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .edit-modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
         .edit-modal-content button {
-            background-color: #00a651;
+            background: linear-gradient(45deg, #00a651, #00c853);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .edit-modal-content button:hover {
+            transform: scale(1.05);
         }
 
         .icon-cakto {
@@ -484,6 +524,89 @@
         </div>
 
         <script>
+            // Função para animar números
+            function animateNumber(element, target, duration = 1000) {
+                const start = 0;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const current = Math.floor(start + (target - start) * progress);
+                    element.textContent = current.toLocaleString('pt-BR');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+
+                requestAnimationFrame(update);
+            }
+
+            // Função para animar a barra de progresso
+            function animateProgressBar(targetPercentage, duration = 1000) {
+                const progressFill = document.getElementById('progressFill');
+                const startWidth = parseFloat(progressFill.style.width) || 0;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentWidth = startWidth + (targetPercentage - startWidth) * progress;
+                    progressFill.style.width = currentWidth + '%';
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+
+                requestAnimationFrame(update);
+            }
+
+            // Função para carregar valores do localStorage com animações
+            function loadFromStorage() {
+                const profileCircle = localStorage.getItem('profileInitial') || 'D';
+                const accountName = localStorage.getItem('accountName') || 'Nome da Conta';
+                const faturamentoCurrent = localStorage.getItem('faturamentoCurrent') || '0';
+                const faturamentoGoal = localStorage.getItem('faturamentoGoal') || '10k';
+                const saldoDisponivel = localStorage.getItem('saldoDisponivel') || '0,00';
+                const saldoPendente = localStorage.getItem('saldoPendente') || '0,00';
+
+                document.getElementById('profileCircle').textContent = profileCircle;
+                document.getElementById('accountName').textContent = accountName;
+                document.getElementById('faturamentoCurrent').textContent = '0';
+                document.getElementById('faturamentoGoal').textContent = faturamentoGoal;
+                document.getElementById('saldoDisponivel').textContent = '0,00';
+                document.getElementById('saldoPendente').textContent = '0,00';
+
+                // Resetar barra de progresso
+                document.getElementById('progressFill').style.width = '0%';
+
+                // Animar números após um pequeno delay
+                setTimeout(() => {
+                    const currentNum = parseFloat(faturamentoCurrent.replace(',', '.')) || 0;
+                    const disponivelNum = parseFloat(saldoDisponivel.replace(',', '.')) || 0;
+                    const pendenteNum = parseFloat(saldoPendente.replace(',', '.')) || 0;
+
+                    animateNumber(document.getElementById('faturamentoCurrent'), currentNum);
+                    animateNumber(document.getElementById('saldoDisponivel'), disponivelNum);
+                    animateNumber(document.getElementById('saldoPendente'), pendenteNum);
+
+                    // Animar barra de progresso
+                    const goal = parseFloat(faturamentoGoal.replace('k', '000').replace(',', '.')) || 10000;
+                    const percentage = Math.min((currentNum / goal) * 100, 100);
+                    animateProgressBar(percentage);
+                }, 500);
+            }
+
+            // Função para atualizar a barra de progresso
+            function updateProgressBar() {
+                const current = parseFloat(document.getElementById('faturamentoCurrent').textContent.replace(',', '.')) || 0;
+                const goal = parseFloat(document.getElementById('faturamentoGoal').textContent.replace('k', '000').replace(',', '.')) || 10000;
+                const percentage = Math.min((current / goal) * 100, 100);
+                animateProgressBar(percentage);
+            }
+
             function toggleNotifications() {
                 const notif = document.getElementById('notifications');
                 notif.style.display = notif.style.display === 'block' ? 'none' : 'block';
@@ -494,4 +617,56 @@
                 if (!document.fullscreenElement) {
                     elem.requestFullscreen().catch(err => {
                         console.log("Erro ao ativar fullscreen:", err);
-                   
+                    });
+                } else {
+                    document.exitFullscreen().catch(err => {
+                        console.log("Erro ao sair do fullscreen:", err);
+                    });
+                }
+            }
+
+            function openEditModal() {
+                document.getElementById('editModal').style.display = 'flex';
+                // Preencher os campos com os valores atuais
+                document.getElementById('editInitial').value = document.getElementById('profileCircle').textContent;
+                document.getElementById('editName').value = document.getElementById('accountName').textContent;
+                document.getElementById('editFaturamentoCurrent').value = document.getElementById('faturamentoCurrent').textContent;
+                document.getElementById('editFaturamentoGoal').value = document.getElementById('faturamentoGoal').textContent;
+                document.getElementById('editSaldoDisponivel').value = document.getElementById('saldoDisponivel').textContent;
+                document.getElementById('editSaldoPendente').value = document.getElementById('saldoPendente').textContent;
+            }
+
+            function saveEdits() {
+                // Salvar os valores editados
+                const profileCircle = document.getElementById('editInitial').value;
+                const accountName = document.getElementById('editName').value;
+                const faturamentoCurrent = document.getElementById('editFaturamentoCurrent').value;
+                const faturamentoGoal = document.getElementById('editFaturamentoGoal').value;
+                const saldoDisponivel = document.getElementById('editSaldoDisponivel').value;
+                const saldoPendente = document.getElementById('editSaldoPendente').value;
+
+                document.getElementById('profileCircle').textContent = profileCircle;
+                document.getElementById('accountName').textContent = accountName;
+                document.getElementById('faturamentoCurrent').textContent = faturamentoCurrent;
+                document.getElementById('faturamentoGoal').textContent = faturamentoGoal;
+                document.getElementById('saldoDisponivel').textContent = saldoDisponivel;
+                document.getElementById('saldoPendente').textContent = saldoPendente;
+
+                // Salvar no localStorage
+                localStorage.setItem('profileInitial', profileCircle);
+                localStorage.setItem('accountName', accountName);
+                localStorage.setItem('faturamentoCurrent', faturamentoCurrent);
+                localStorage.setItem('faturamentoGoal', faturamentoGoal);
+                localStorage.setItem('saldoDisponivel', saldoDisponivel);
+                localStorage.setItem('saldoPendente', saldoPendente);
+
+                // Atualizar barra de progresso
+                updateProgressBar();
+
+                // Fechar o modal
+                document.getElementById('editModal').style.display = 'none';
+            }
+
+            // Carregar valores ao carregar a página
+            window.onload = loadFromStorage;
+                </script>
