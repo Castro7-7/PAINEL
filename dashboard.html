@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cakto - Dashboard Mobile</title>
+   <style>
+
+    .icon {
+    width: 17px;   /* <<< altere aqui */
+    height: auto;
+}
+
+    body {
+    display:  flex;
+    height: 90vh;
+    font-family: 'roboto', gobold, sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #1a2a2b 30%, #0e4634 90%, #11503c 100%); /* cinza-verde → verde forte */
+    color: #ffffff; /* texto claro para contraste */
+    font-size: 12px;
+}
+
+
+    header { 
+    color: #828f94;
+    padding: 3px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+ 
+
+   .profile {
+    display: flex;
+    align-items: center; /* centraliza verticalmente o conteúdo */
+}
+
+    .profile-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #00a651; /* verde principal */
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: bold;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .notifications {
+        position: absolute;
+        top: 60px;
+        right: 15px;
+        background: #ffffff; /* branco */
+        border: 1px solid #dddddd; /* cinza médio */
+        border-radius: 8px;
+        padding: 10px;
+        width: 250px;
+        display: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .notification-item {
+        padding: 5px 0;
+        border-bottom: 1px solid #eeeeee; /* cinza muito claro */
+        color: #333;
+    }
+
+    .container {
+        margin-top: 40px;
+        padding: 15px;
+    }
+
+   .faturamento {
+    margin-right: 30px;
+    background: rgba(50, 53, 62, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+    display: flex;
+    flex-direction: column; /* deixa faturamento acima */
+    gap: 5px;
+}
+
+.faturamento-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cacto-ouro {
+    width: 30px;
+    height: 30px;
+
+    /* gradiente ouro */
+    background: radial-gradient(circle,
+        #f0efeb 20%,   /* mais claro no centro */
+        #d8bd93 55%,   /* ouro médio */
+        #a97218 100%   /* ouro escuro */
+    );
+
+    /* Usar a imagem como MÁSCARA, não como cor */
+    -webkit-mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
+    mask-image: url("https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png");
+
+    -webkit-mask-size: contain;
+    mask-size: contain;
+
+    -webkit-mask-position: center;
+    mask-position: center;
+
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+
+.faturamento-left img {
+    font-size: 28px;
+    color: #00a651;
+}
+
+.faturamento-text {
+    font-size: 15px;
+    font-weight: bold;
+    color: #596467;
+    font-family: kenyan-coffee-names, sans-serif;
+    font-weight: 250;
+}
+
+.faturamento-value {
+    font-size: 14px;
+    color: #f1eeee;
+    font-family: kenyan-coffee-names, sans-serif;
+    font-weight: 500;
+    margin-top: 7px;
+}
+
+.progress-bar {
+    width: 80%;
+    height: 7px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    margin-top: 3px;
+    margin-left: 41px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #00a651;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+    .balances {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 7px;
+        width: 300px;
+        height: 100px;
+    }
+
+    .balance-box { 
+        width: 100px;
+        display: flex;
+        background: rgba(50, 53, 62, 0.60);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        position: flex;
+    }
+
+    .balance-title {
+        font-size: 13px;
+        color: #666666; /* cinza escuro */
+        margin-bottom: 5px;
+    }
+
+    .balance-value {
+        font-size: 14px;
+        font-weight: bold;
+        color: #f7f8f8; 
+        margin-top: 10px;
+    }
+
+    .balance-btn {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        background-color: #00a068; /* verde principal */
+        color: white;
+        border: none;
+        border-radius: 10px 0px;
+        padding: 5px 15px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+
+
+.topic {
+  margin-bottom: 7px;
+  width: 250px;
+  padding: 10px;               /* corrigido (sem vírgulas) */
+  background: rgba(50, 53, 62, 0.60);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;         /* centraliza horizontalmente */
+  gap: 8px;                    /* espaço entre emoji e texto dentro do card */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+
+.topic i {  
+  font-size: 20px;
+  color: #00a651;
+  margin: 0;
+}
+
+.topic span {
+  font-size: 14px;
+  color: #f7f1f1;
+}
+
+footer { 
+    background: rgba(19, 22, 26, 0.65);       /* glass leve */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    position: fixed;
+    bottom: 20px;                             /* 🔥 flutuando 20px acima */
+    left: 50%;
+    transform: translateX(-50%);              /* centraliza */
+    
+    width: 90%;
+    max-width: 420px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    padding: 12px 0;
+    border-radius: 22px;                      /* 🔥 cantos arredondados */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);  /* efeito flutuante */
+    z-index: 999;
+}
+
+footer a {
+    text-decoration: none;
+    color: #cccccc;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+footer i {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 4px;
+    color: #cccccc;
+}
+
+
+
+
+.active {
+    color: #00a651; /* verde principal */
+}
+
+.edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.edit-modal-content {
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    color: #333;
+}
+
+.edit-modal-content button {
+    background-color: #00a651;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.icon-cakto {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -20px; /* sobe 20px */
+}
+
+.cakto-circle {
+    width: 51px;   /* 48 + 3 */
+    height: 51px;  /* 48 + 3 */
+    border-radius: 50%;
+    background: rgba(0, 166, 81, 1);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #00a651;
+}
+
+.cakto-circle img {
+    width: 29px;  /* antes 26 */
+    height: 29px;
+} 
+
+.header-icons {
+    display: flex;
+    gap: 15px;
+    margin-right: 70px;
+    width: 2px;
+    height: auto;
+}
+</style>
+
+</head>
+<body>
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&family=Poppins:wght@100;200&family=Raleway:wght@100;200&display=swap" rel="stylesheet">
+    <header>
+        <div class="profile">
+            <div class="profile-circle editable" id="profileCircle" onclick="openEditModal()">D</div>
+            <div class="greeting">Olá, <span class="editable" id="accountName">Nome da Conta</span></div>
+        </div>
+        <div class="header-icons">
+
+    <!-- Botão de Visibilidade / Fullscreen -->
+    <a href="#fullscreen" onclick="toggleVisibility()">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/visible.png" class="icon">
+    </a>
+
+    <!-- Botão de Notificações -->
+    <a href="#notifications" onclick="toggleNotifications()">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/appointment-reminders.png" class="icon">
+    </a>
+
+</div>
+
+        <div class="notifications" id="notifications">
+            <div class="notification-item editable" contenteditable="true">PIX gerado - R$ 100,00</div>
+            <div class="notification-item editable" contenteditable="true">Venda confirmada - R$ 200,00</div>
+            <div class="notification-item editable" contenteditable="true">Novo comprador interessado</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="faturamento">
+            <div class="faturamento-left">
+                 <img class="cacto-ouro" src="https://raw.githubusercontent.com/gist-ai-assets/cacto-gold/main/cacto-gold.svg" alt="Cacto branco"> <!-- Emoje Cakto -->
+                <div>
+                    <div class="faturamento-text">Faturamento</div>
+                    <div class="faturamento-value">R$ <span class="editable" id="faturamentoCurrent">0</span> / <span class="editable" id="faturamentoGoal">10k</span></div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="balances">
+            <div class="balance-box">
+                <div class="balance-title">Saldo disponível</div>
+                <div class="balance-value">R$ <span class="editable" id="saldoDisponivel">0,00</span></div>
+                <button class="balance-btn">Sacar</button>
+            </div>
+            <div class="balance-box">
+                <div class="balance-title">Saldo pendente</div>
+                <div class="balance-value">R$ <span class="editable" id="saldoPendente">0,00</span></div>
+                <button class="balance-btn">Receitas</button>
+            </div>
+        </div>
+
+        <div class="topics">
+    <div class="topic">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/combo-chart.png" class="icon">
+        <span>Relatórios</span>
+    </div>
+
+    <div class="topic">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/shopping-bag.png" class="icon">
+        <span>Produtos</span>
+    </div>
+
+    <div class="topic">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/shield.png" class="icon">
+        <span>Tokens</span>
+    </div>
+
+    <div class="topic">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/headset.png" class="icon">
+        <span>Suporte</span>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<footer>
+    <a href="#home" class="active">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/money.png" class="icon">
+    </a>
+
+    <a href="#chart">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/line-chart.png" class="icon">
+    </a>
+
+    <a href="#cakto" class="icon-cakto">
+    <div class="cakto-circle">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/cactus.png">
+    </div>
+</a>
+
+
+    <a href="#wallet">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/wallet.png" class="icon">
+    </a>
+
+    <a href="#market">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/shopaholic.png" class="icon">
+    </a>
+</footer>
+
+
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <h3>Editar Valores</h3>
+            <label>Inicial da Conta:</label>
+            <input type="text" id="editInitial" value="D">
+            <label>Nome da Conta:</label>
+            <input type="text" id="editName" value="Nome da Conta">
+            <label>Faturamento Atual:</label>
+            <input type="text" id="editFaturamentoCurrent" value="0">
+            <label>Faturamento Meta:</label>
+            <input type="text" id="editFaturamentoGoal" value="10k">
+            <label>Saldo Disponível:</label>
+            <input type="text" id="editSaldoDisponivel" value="0,00">
+            <label>Saldo Pendente:</label>
+            <input type="text" id="editSaldoPendente" value="0,00">
+            <button onclick="saveEdits()">Salvar</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleNotifications() {
+            const notif = document.getElementById('notifications');
+            notif.style.display = notif.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleVisibility() {
+    const elem = document.documentElement;
+
+    // Se NÃO está em fullscreen → entrar
+    if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => {
+            console.log("Erro ao ativar fullscreen:", err);
+        });
+    } 
+    // Se já está em fullscreen → sair
+    else {
+        document.exitFullscreen();
+    }
+}
+
+
+        function openEditModal() {
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function saveEdits() {
+            document.getElementById('profileCircle').textContent = document.getElementById('editInitial').value.charAt(0).toUpperCase();
+            document.getElementById('accountName').textContent = document.getElementById('editName').value;
+            document.getElementById('faturamentoCurrent').textContent = document.getElementById('editFaturamentoCurrent').value;
+            document.getElementById('faturamentoGoal').textContent = document.getElementById('editFaturamentoGoal').value;
+            document.getElementById('saldoDisponivel').textContent = document.getElementById('editSaldoDisponivel').value;
+            document.getElementById('saldoPendente').textContent = document.getElementById('editSaldoPendente').value;
+            updateProgress();
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function updateProgress() {
+            const current = parseFloat(document.getElementById('faturamentoCurrent').textContent.replace(',', '.'));
+            const goal = parseFloat(document.getElementById('faturamentoGoal').textContent.replace('k', '000').replace(',', '.'));
+            const percentage = (current / goal) * 100;
+            document.getElementById('progressFill').style.width = Math.min(percentage, 100) + '%';
+        }
+
+        // Inicializar progresso
+        updateProgress();
+    </script>
+</body>
+</html>
