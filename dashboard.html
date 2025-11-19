@@ -217,29 +217,45 @@
 
 
 
+/* CONTAINER DOS TÓPICOS */
+.topics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;   /* mesma largura do rodapé */
+    margin: 0 auto;     /* centraliza */
+    margin-top: 10px;
+}
+
+/* CADA CARD */
 .topic {
-  margin-bottom: 7px;
-  width: 250px;
-  padding: 10px;               /* corrigido (sem vírgulas) */
-  background: rgba(50, 53, 62, 0.60);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;         /* centraliza horizontalmente */
-  gap: 8px;                    /* espaço entre emoji e texto dentro do card */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  cursor: pointer;
+    width: 100%;                /* <<< AGORA FICA LARGO */
+    padding: 12px;
+    background: rgba(50, 53, 62, 0.60);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    cursor: pointer;
+    backdrop-filter: blur(12px);
 }
 
-.topic i {  
-  font-size: 20px;
-  color: #00a651;
-  margin: 0;
+/* ÍCONES */
+.topic img {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) saturate(100%) invert(42%) sepia(87%) saturate(747%) hue-rotate(110deg) brightness(96%) contrast(92%);
 }
 
+/* TEXTO */
 .topic span {
-  font-size: 14px;
-  color: #f7f1f1;
+    font-size: 15px;
+    color: #f2f2f2;
+    font-weight: 300;
 }
+
 
 footer { 
     background: rgba(19, 22, 26, 0.65);       /* glass leve */
