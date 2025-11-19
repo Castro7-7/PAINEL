@@ -19,7 +19,7 @@
             background: linear-gradient(to bottom, #1a2a2b 30%, #0e4634 90%, #11503c 100%);
             color: #ffffff;
             font-size: 14px;
-            overflow-x: hidden;  /* Adicionado para prevenir overflow horizontal */
+            overflow-x: hidden;  /* Previne overflow horizontal */
         }
 
         header { 
@@ -77,15 +77,15 @@
             margin-top: 50px;
             padding: 20px;
             width: 100%;
-            max-width: 100%;  /* Garantido para não exceder */
-            margin: 50px auto 0;  /* Centralizado */
+            max-width: 100%;
+            margin: 50px auto 0;
             box-sizing: border-box;
         }
 
         .faturamento {
             width: 100%;
-            max-width: 100%;  /* Garantido para não exceder */
-            margin: 0 auto;  /* Centralizado */
+            max-width: 100%;
+            margin: 0 auto;
             background: rgba(50, 53, 62, 0.45);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -160,8 +160,8 @@
 
         .balances {
             width: 100%;
-            max-width: 100%;  /* Garantido para não exceder */
-            margin: 0 auto;  /* Centralizado */
+            max-width: 100%;
+            margin: 0 auto;
             height: auto;
             display: flex;
             gap: 10px;
@@ -213,8 +213,8 @@
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            max-width: 100%;  /* Garantido para não exceder */
-            margin: 15px auto 0;  /* Centralizado */
+            max-width: 100%;
+            margin: 15px auto 0;
         }
 
         .topic {
@@ -251,8 +251,7 @@
             bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            width: 98%;  /* Aumentado para ocupar mais a parte inferior */
-            max-width: 480px;  /* Aumentado */
+            width: calc(100% - 40px);  /* Ocupa toda a largura menos 20px de cada lado */
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -375,7 +374,6 @@
     </style>
 </head>
 <body>
-    <!-- O HTML permanece igual -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200&family=Poppins:wght@100;200&family=Raleway:wght@100;200&display=swap" rel="stylesheet">
     <header>
         <div class="profile">
@@ -494,4 +492,18 @@
                 const elem = document.documentElement;
                 if (!document.fullscreenElement) {
                     elem.requestFullscreen().catch(err => {
-                        console.log("Erro ao ativ
+                        console.log("Erro ao ativar fullscreen:", err);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            function openEditModal() {
+                document.getElementById('editModal').style.display = 'flex';
+            }
+
+            function saveEdits() {
+                document.getElementById('profileCircle').textContent = document.getElementById('editInitial').value.charAt(0).toUpperCase();
+                document.getElementById('accountName').textContent = document.getElementById('editName').value;
+                document.getElementById('faturamentoCurrent').textContent = document.getElementById('editFaturamentoCurrent').value
