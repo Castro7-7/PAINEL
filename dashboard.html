@@ -19,7 +19,7 @@
             background: linear-gradient(to bottom, #1a2a2b 30%, #0e4634 90%, #11503c 100%);
             color: #ffffff;
             font-size: 14px;
-            overflow-x: hidden;  /* Previne overflow horizontal */
+            overflow-x: hidden;
         }
 
         header { 
@@ -75,7 +75,7 @@
 
         .container {
             margin-top: 50px;
-            padding: 20px;
+            padding: 20px 15px;  /* Adicionado 15px nas laterais (direita e esquerda) */
             width: 100%;
             max-width: 100%;
             margin: 50px auto 0;
@@ -251,7 +251,7 @@
             bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 40px);  /* Ocupa toda a largura menos 20px de cada lado */
+            width: calc(100% - 40px);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -506,4 +506,4 @@
             function saveEdits() {
                 document.getElementById('profileCircle').textContent = document.getElementById('editInitial').value.charAt(0).toUpperCase();
                 document.getElementById('accountName').textContent = document.getElementById('editName').value;
-                document.getElementById('faturamentoCurrent').textContent = document.getElementById('editFaturamentoCurrent').value
+                document.getElementById('faturamentoCurrent').textContent =
