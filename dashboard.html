@@ -378,6 +378,31 @@
             margin-right: 50px;
         }
 
+        /* Pull to Refresh Indicator */
+        .pull-to-refresh {
+            position: fixed;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 166, 81, 0.3);
+            border-top: 4px solid #00a651;
+            border-radius: 50%;
+            display: none;
+            z-index: 3000;
+            transition: top 0.3s ease;
+        }
+
+        .pull-to-refresh.spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
         /* Media Query para Mobile (telas até 768px) */
         @media (max-width: 768px) {
             body {
@@ -429,6 +454,8 @@
             <div class="notification-item editable" contenteditable="true">Novo comprador interessado</div>
         </div>
     </header>
+
+    <div class="pull-to-refresh" id="pullToRefresh"></div>
 
     <div class="container">
         <div class="faturamento">
@@ -658,6 +685,52 @@
                 // Fechar o modal
                 document.getElementById('editModal').style.display = 'none';
             }
+
+            // Pull to Refresh functionality
+            let startY = 0;
+            let isPulling = false;
+            let pullDistance = 0;
+            const pullThreshold = 80;
+            const pullIndicator = document.getElementById('pullToRefresh');
+
+            document.addEventListener('touchstart', function(e) {
+                if (window.scrollY === 0 && document.fullscreenElement) {
+                    startY = e.touches[0].clientY;
+                    isPulling = true;
+                }
+            });
+
+            document.addEventListener('touchmove', function(e) {
+                if (isPulling) {
+                    pullDistance = e.touches[0].clientY - startY;
+                    if (pullDistance > 0) {
+                        e.preventDefault();
+                        pullIndicator.style.display = 'block';
+                        pullIndicator.style.top = Math.min(pullDistance - 60, 20) + 'px';
+                        if (pullDistance > pullThreshold) {
+                            pullIndicator.classList.add('spinning');
+                        } else {
+                            pullIndicator.classList.remove('spinning');
+                        }
+                    }
+                }
+            });
+
+            document.addEventListener('touchend', function(e) {
+                if (isPulling) {
+                    if (pullDistance > pullThreshold) {
+                        // Refresh the page
+                        location.reload();
+                    } else {
+                        // Hide indicator
+                        pullIndicator.style.display = 'none';
+                        pullIndicator.classList.remove('spinning');
+                    }
+                    isPulling = false;
+                    pullDistance = 0;
+                    pullIndicator.style.top = '-60px';
+                }
+            });
 
             // Carregar valores ao carregar a página
             window.onload = loadFromStorage;
