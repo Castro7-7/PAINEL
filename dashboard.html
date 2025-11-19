@@ -634,15 +634,28 @@
             function toggleVisibility() {
                 const elem = document.documentElement;
                 if (!document.fullscreenElement) {
-                    elem.requestFullscreen().catch(err => {
+                    elem.requestFullscreen().then(() => {
+                        localStorage.setItem('fullscreenEnabled', 'true');
+                    }).catch(err => {
                         console.log("Erro ao ativar fullscreen:", err);
                     });
                 } else {
-                    document.exitFullscreen().catch(err => {
+                    document.exitFullscreen().then(() => {
+                        localStorage.removeItem('fullscreenEnabled');
+                    }).catch(err => {
                         console.log("Erro ao sair do fullscreen:", err);
                     });
                 }
             }
+
+            // Listen for fullscreen changes to update localStorage
+            document.addEventListener('fullscreenchange', () => {
+                if (document.fullscreenElement) {
+                    localStorage.setItem('fullscreenEnabled', 'true');
+                } else {
+                    localStorage.removeItem('fullscreenEnabled');
+                }
+            });
 
             function openEditModal() {
                 document.getElementById('editModal').style.display = 'flex';
@@ -720,7 +733,7 @@
                 if (isPulling) {
                     if (pullDistance > pullThreshold) {
                         // Refresh the page while keeping fullscreen
-                        localStorage.setItem('wasFullscreen', 'true');
+                        localStorage.setItem('fullscreenEnabled', 'true');
                         location.reload();
                     } else {
                         // Hide indicator
@@ -737,8 +750,7 @@
             window.onload = function() {
                 loadFromStorage();
                 // Restore fullscreen if it was active before refresh
-                if (localStorage.getItem('wasFullscreen') === 'true') {
-                    localStorage.removeItem('wasFullscreen');
+                if (localStorage.getItem('fullscreenEnabled') === 'true') {
                     document.documentElement.requestFullscreen().catch(err => {
                         console.log("Erro ao restaurar fullscreen:", err);
                     });
