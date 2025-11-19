@@ -583,7 +583,7 @@
             }
 
             // Função para carregar valores do localStorage com animações
-            function loadFromStorage() {
+            function loadFromStorage(callback) {
                 const profileCircle = localStorage.getItem('profileInitial') || 'D';
                 const accountName = localStorage.getItem('accountName') || 'Nome da Conta';
                 const faturamentoCurrent = localStorage.getItem('faturamentoCurrent') || '0';
@@ -615,6 +615,9 @@
                     const goal = parseFloat(faturamentoGoal.replace('k', '000').replace(',', '.')) || 10000;
                     const percentage = Math.min((currentNum / goal) * 100, 100);
                     animateProgressBar(percentage);
+
+                    // Call callback after animations
+                    if (callback) callback();
                 }, 500);
             }
 
@@ -719,7 +722,7 @@
                     if (pullDistance > 0) {
                         e.preventDefault();
                         pullIndicator.style.display = 'block';
-                        pullIndicator.style.top = Math.min(pullDistance - 60, 20) + 'px';
+                        pullIndicator.style.top = Math.min(pullDistance - 40, 60) + 'px';
                         if (pullDistance > pullThreshold) {
                             pullIndicator.classList.add('spinning');
                         } else {
@@ -733,7 +736,13 @@
                 if (isPulling) {
                     if (pullDistance > pullThreshold) {
                         // Internal refresh: update numbers and progress bar with animation
-                        loadFromStorage();
+                        loadFromStorage(() => {
+                            // Hide indicator after animations complete
+                            setTimeout(() => {
+                                pullIndicator.style.display = 'none';
+                                pullIndicator.classList.remove('spinning');
+                            }, 500);
+                        });
                     } else {
                         // Hide indicator
                         pullIndicator.style.display = 'none';
