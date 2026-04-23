@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Link Chip | Internet Ilimitada</title>
+<style>
+/* RESET E FUNDO TEMÁTICO */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0; padding: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at top, #0a0d14 0%, #1c1f28 60%, #111317 100%);
+  color: #f5f5f5;
+  position: relative;
+}
+
+/* LINHAS DE DADOS (Efeito Cyber) */
+.line-bg { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.line { position: absolute; width:1px; height:100%; background: rgba(0, 123, 255, 0.1); animation: moveLine linear infinite; }
+@keyframes moveLine { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+
+.container { max-width: 1000px; margin: auto; padding: 40px 20px; text-align: center; position: relative; z-index:1; }
+
+h1 { font-size: 3em; color: #fff; margin-bottom: 10px; }
+.subtitle { font-size: 1.2em; margin-bottom: 40px; color: #007bff; font-weight: bold; }
+
+/* DESTAQUE DO PRODUTO */
+.product-showcase { margin-bottom: 50px; }
+.product-showcase img { width: 300px; border-radius: 15px; box-shadow: 0 0 40px rgba(0, 123, 255, 0.3); transition: transform 0.5s; }
+.product-showcase img:hover { transform: scale(1.05); }
+
+.section { text-align: left; padding: 25px; margin-bottom: 30px; background: rgba(255,255,255,0.03); border-radius: 15px; }
+.section h2 { color: #007bff; margin-bottom: 15px; }
+
+ul { list-style: none; padding: 0; }
+ul li { display: flex; align-items: center; padding: 12px; font-size: 1.1em; margin-bottom: 10px; border-left: 5px solid #007bff; background: rgba(0,0,0,0.2); }
+ul li span { margin-right: 15px; }
+
+.btn-buy { display: inline-block; padding: 18px 40px; background-color: #007bff; color: #fff; font-weight: bold; text-decoration: none; border-radius: 5px; transition: 0.3s; }
+.btn-buy:hover { background-color: #0056b3; box-shadow: 0 0 20px #007bff; }
+
+.btn-fixed { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background-color: #007bff; color: #fff; text-align: center; padding: 20px 0; font-weight: bold; text-decoration: none; z-index: 999; }
+@media (max-width:768px){ .btn-fixed{ display:block; } }
+</style>
+</head>
+<body>
+
+<div class="line-bg" id="line-bg"></div>
+
+<div class="container">
+  <h1>Star Link Chip</h1>
+  <p class="subtitle">Internet Ilimitada de Alta Velocidade em Qualquer Lugar.</p>
+
+  <div class="product-showcase">
+    <img src="https://via.placeholder.com/300x200?text=Star+Link+Chip" alt="Star Link Chip">
+  </div>
+
+  <div class="section">
+    <h2>Por que escolher o Star Link Chip?</h2>
+    <ul>
+      <li><span>🚀</span> Conexão 5G de ultra velocidade</li>
+      <li><span>♾️</span> Dados ilimitados sem redução de velocidade</li>
+      <li><span>🌍</span> Cobertura nacional em áreas rurais e urbanas</li>
+      <li><span>🔒</span> Conexão segura e estável para trabalho e jogos</li>
+      <li><span>🔌</span> Instalação instantânea: chegou, conectou!</li>
+    </ul>
+  </div>
+
+  <div class="section" style="text-align:center;">
+    <p style="font-size:1.5em; font-weight:bold;">Oferta Especial</p>
+    <p>Adquira agora e tenha liberdade total na sua navegação.</p>
+    <h2 style="color: #fff;">Por apenas R$ 49,90</h2>
+    <a href="#" class="btn-buy">Comprar Star Link Chip</a>
+  </div>
+</div>
+
+<a href="#" class="btn-fixed">Comprar Agora - R$ 49,90</a>
+
+<script>
+// Gerar linhas de fundo
+const lineBg = document.getElementById('line-bg');
+for(let i=0;i<20;i++){
+  const line = document.createElement('div');
+  line.className = 'line';
+  line.style.left = Math.random()*100 + '%';
+  line.style.animationDuration = 3 + Math.random()*7 + 's';
+  lineBg.appendChild(line);
+}
+</script>
+</body>
+</html>
