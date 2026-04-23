@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar Compra | Star Link Chip</title>
+<style>
+/* --- RESET E ESTILOS BASE (Mesma paleta escura) --- */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0; padding: 0;
+  overflow-x: hidden;
+  background: radial-gradient(circle at top, #0a0d14 0%, #1c1f28 60%, #111317 100%);
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Garante que o footer fique no final */
+}
+
+/* LINHAS DE DADOS (Efeito Cyber de fundo) */
+.line-bg { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.line { position: absolute; width:1px; height:100%; background: rgba(0, 123, 255, 0.05); animation: moveLine linear infinite; }
+@keyframes moveLine { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+
+/* --- CONTAINER PRINCIPAL --- */
+.container {
+  max-width: 600px;
+  margin: 50px auto; /* Centraliza na tela */
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+h1 { font-size: 2em; color: #fff; text-align: center; margin-bottom: 10px; }
+.subtitle { text-align: center; color: #007bff; margin-bottom: 30px; font-weight: bold;}
+
+/* --- ESTILIZAÇÃO DO FORMULÁRIO --- */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 5px;
+  border: 1px solid #333;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 1em;
+  box-sizing: border-box; /* Garante que o padding não aumente o tamanho */
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+/* Layout em grade para CEP/Número e Bairro/Cidade */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+.col-6 { flex: 1; }
+
+/* Mensagem de erro do CEP */
+#cep-error {
+  color: #ff4d4d;
+  font-size: 0.85em;
+  margin-top: 5px;
+  display: none;
+}
+
+/* --- BOTÃO COMPRAR --- */
+.btn-submit {
+  width: 100%;
+  padding: 18px;
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+  box-shadow: 0 0 20px #007bff;
+}
+
+/* --- RODAPÉ DE VERIFICAÇÃO (SEDEX) --- */
+footer {
+  margin-top: auto; /* Empurra o footer para baixo */
+  text-align: center;
+  padding: 30px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid #222;
+}
+
+.verification-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: #aaa;
+  font-size: 0.95em;
+}
+
+/* Estilo para simular o logo do SEDEX (Cores oficiais: Amarelo e Azul) */
+.sedex-logo {
+  background-color: #ffee00; /* Amarelo Correios */
+  color: #003399; /* Azul Correios */
+  font-weight: bold;
+  font-style: italic;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: 'Arial Black', sans-serif;
+  letter-spacing: -1px;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 480px) {
+  .form-row { flex-direction: column; gap: 0; }
+  .container { margin: 20px; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="line-bg" id="line-bg"></div>
+
+<div class="container">
+  <h1>Dados de Envio</h1>
+  <p class="subtitle">Complete para receber seu Star Link Chip</p>
+
+  <form id="shipping-form">
+    
+    <div class="form-row">
+      <div class="form-group col-6">
+        <label for="cep">CEP</label>
+        <input type="text" id="cep" name="cep" placeholder="00000-000" required maxlength="9">
+        <div id="cep-error">CEP não encontrado.</div>
+      </div>
+      <div class="form-group col-6">
+        <label for="numero">Número</label>
+        <input type="text" id="numero" name="numero" placeholder="123" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="endereco">Endereço (Rua/Avenida)</label>
+      <input type="text" id="endereco" name="endereco" placeholder="Nome da rua..." required>
+    </div>
+
+    <div class="form-group">
+      <label for="complemento">Complemento (Opcional)</label>
+      <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, etc.">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-6">
+        <label for="bairro">Bairro</label>
+        <input type="text" id="bairro" name="bairro" placeholder="Seu bairro" required>
+      </div>
+      <div class="form-group col-6">
+        <label for="cidade">Cidade</label>
+        <input type="text" id="cidade" name="cidade" placeholder="Sua cidade" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="estado">Estado (UF)</label>
+      <input type="text" id="estado" name="estado" placeholder="SP, RJ, PR..." required maxlength="2">
+    </div>
+
+    <button type="submit" class="btn-submit">Finalizar e Pagar</button>
+  </form>
+</div>
+
+<footer>
+  <div class="verification-bar">
+    <span>Entrega Garantida e Monitorada:</span>
+    <div class="sedex-logo">SEDEX</div>
+    <span>Página Verificada</span>
+  </div>
+</footer>
+
+<script>
+// --- 1. EFEITO DE FUNDO (LINHAS) ---
+const lineBg = document.getElementById('line-bg');
+for(let i=0; i<15; i++){
+  const line = document.createElement('div');
+  line.className = 'line';
+  line.style.left = Math.random()*100 + '%';
+  line.style.animationDuration = 4 + Math.random()*6 + 's';
+  lineBg.appendChild(line);
+}
+
+// --- 2. INTEGRAÇÃO VIACEP (PREENCHIMENTO AUTOMÁTICO) ---
+const cepInput = document.getElementById('cep');
+const addressInput = document.getElementById('endereco');
+const barrioInput = document.getElementById('bairro');
+const cityInput = document.getElementById('cidade');
+const stateInput = document.getElementById('estado');
+const cepError = document.getElementById('cep-error');
+
+// Função para limpar formulário
+const clearForm = () => {
+  addressInput.value = '';
+  barrioInput.value = '';
+  cityInput.value = '';
+  stateInput.value = '';
+};
+
+// Escuta quando o usuário digita no campo CEP
+cepInput.addEventListener('blur', () => {
+  // Remove hífen se houver
+  const cep = cepInput.value.replace(/\D/g, '');
+
+  // Valida o formato do CEP (8 dígitos)
+  if (cep.length !== 8) {
+    clearForm();
+    if(cep.length > 0) cepError.style.display = 'block';
+    return;
+  }
+
+  cepError.style.display = 'none';
+
+  // Consulta a API ViaCEP
+  fetch(`https://viacep.com.br/ws/${cep}/json/`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.erro) {
+        clearForm();
+        cepError.style.display = 'block';
+        return;
+      }
+      // Preenche os campos com os dados recebidos
+      addressInput.value = data.logradouro;
+      barrioInput.value = data.bairro;
+      cityInput.value = data.localidade;
+      stateInput.value = data.uf;
+      
+      // Foca no campo 'Número' para facilitar
+      document.getElementById('numero').focus();
+    })
+    .catch(error => {
+      console.error('Erro ao buscar CEP:', error);
+    });
+});
+
+// --- 3. REDIRECIONAMENTO AO CLICAR EM COMPRAR ---
+document.getElementById('shipping-form').addEventListener('submit', function(event) {
+  event.preventDefault(); // Impede o envio padrão do formulário
+
+  // Adicione aqui a lógica para salvar os dados se necessário
+
+  // URL para onde o cliente será levado (ex: página de pagamento)
+  const proximoLink = "https://suapaginadepagamento.com.br/checkout-final";
+  
+  window.location.href = proximoLink;
+});
+</script>
+
+</body>
+</html>
