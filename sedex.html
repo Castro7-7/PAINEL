@@ -266,15 +266,14 @@ cepInput.addEventListener('blur', () => {
     });
 });
 
-// --- 3. REDIRECIONAMENTO AO CLICAR EM COMPRAR ---
+// --- 3. REDIRECIONAMENTO AO CLICAR EM COMPRAR (COM VALIDAÇÃO) ---
 document.getElementById('shipping-form').addEventListener('submit', function(event) {
   event.preventDefault(); // Impede o envio padrão do formulário
 
-  // Adicione aqui a lógica para salvar os dados se necessário
-
-  // URL para onde o cliente será levado (ex: página de pagamento)
-  const proximoLink = "https://suapaginadepagamento.com.br/checkout-final";
+  // Link direto para o checkout do Cakto (SEU LINK ATUALIZADO)
+  const proximoLink = "https://pay.cakto.com.br/xwjrxta_860928";
   
+  // Redireciona o usuário
   window.location.href = proximoLink;
 });
 </script>
