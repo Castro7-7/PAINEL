@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Para Eduarda</title>
+    <style>
+        body {
+            background-color: #ffe6e6;
+            color: #d63384;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #display { 
+            font-size: 3rem; 
+            font-weight: bold; 
+            transition: transform 1.5s ease-out, margin-top 1.5s ease-out;
+        }
+        #final { 
+            opacity: 0; 
+            transition: opacity 2s ease-in; 
+            font-size: 3rem; 
+            font-weight: 900; 
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="display">100.000 motivos pra amar a Eduarda ❤️</div>
+    <div id="final">Você é o motivo de eu te amar ❤️</div>
+
+    <script>
+        const display = document.getElementById('display');
+        const final = document.getElementById('final');
+        const totalMotivos = 100000;
+        const tempoTotalMs = 10000; // 10 segundos
+        
+        const numAtualizacoes = 500; 
+        const salto = totalMotivos / numAtualizacoes;
+        const intervaloMs = tempoTotalMs / numAtualizacoes;
+
+        setTimeout(() => {
+            let i = 0;
+            function atualizar() {
+                i += salto;
+                if (i < totalMotivos) {
+                    display.innerText = `Motivo ${Math.floor(i)}: Você`;
+                    setTimeout(atualizar, intervaloMs);
+                } else {
+                    // Final da contagem
+                    display.innerText = `Motivo 100.000: Você`;
+                    
+                    // Efeito de subir lentamente
+                    display.style.transform = 'translateY(-50px)';
+                    
+                    // Fade in da frase final
+                    setTimeout(() => {
+                        final.style.opacity = '1';
+                    }, 1000);
+                }
+            }
+            atualizar();
+        }, 1500);
+    </script>
+</body>
+</html>
