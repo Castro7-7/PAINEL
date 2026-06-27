@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Tempo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        /* Bloqueio total de barras de rolagem no HTML e Body */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050505; /* Tema All Black */
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Contêiner isolado para as partículas não causarem bugs na tela */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Luzes de fundo sutis em rosa e roxo para dar profundidade ao tema escuro */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(180px);
+            opacity: 0.12;
+            z-index: 1;
+        }
+        body::before {
+            top: 5%;
+            left: 5%;
+            background: #ff007f; /* Rosa Neon */
+        }
+        body::after {
+            bottom: 5%;
+            right: 5%;
+            background: #8a2be2; /* Roxo Neon */
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 10, 10, 0.85); /* Caixa interna All Black */
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 3.5rem 2rem;
+            border-radius: 24px;
+            /* Brilho sutil misturando rosa e roxo nas bordas da caixa */
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.95),
+                        0 0 40px rgba(255, 0, 127, 0.08),
+                        0 0 40px rgba(138, 43, 226, 0.08);
+            text-align: center;
+            width: 95%;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 1.8rem;
+            margin-bottom: 3rem;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Alinhamento de todos os itens estritamente na mesma linha */
+        .counter-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .time-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #0f0f0f; /* Caixas internas pretas */
+            padding: 1.5rem 0.5rem;
+            border-radius: 16px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.01);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Borda gradiente oculta que acende no hover */
+        .time-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1.5px;
+            background: linear-gradient(135deg, #ff007f, #8a2be2);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.15;
+            transition: opacity 0.4s;
+        }
+
+        .time-box:hover {
+            transform: translateY(-5px);
+            background: #121212;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7), 
+                        0 0 15px rgba(255, 0, 127, 0.2);
+        }
+        
+        .time-box:hover::after {
+            opacity: 0.8;
+        }
+
+        .number {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 70%, #a0a0a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.9);
+        }
+
+        .label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.7rem;
+            color: #666;
+            transition: color 0.4s;
+        }
+
+        .time-box:hover .label {
+            color: #ff007f; /* Altera a legenda para rosa ao passar o mouse */
+        }
+
+        /* Partículas de neon rosa e roxo */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float infinite linear;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(105vh) scale(0);
+                opacity: 0;
+            }
+            20% { opacity: 0.5; }
+            80% { opacity: 0.5; }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Responsividade: Garante que tudo fique na mesma linha reduzindo dinamicamente o tamanho */
+        @media (max-width: 768px) {
+            h1 { font-size: 1.4rem; margin-bottom: 2rem; }
+            .counter-row { gap: 6px; }
+            .number { font-size: 1.6rem; }
+            .label { font-size: 0.55rem; letter-spacing: 1px; margin-top: 0.4rem; }
+            .time-box { padding: 1rem 0.2rem; border-radius: 10px; }
+            .time-box::after { border-radius: 10px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.05rem; }
+            .counter-row { gap: 4px; }
+            .number { font-size: 1.15rem; }
+            .label { font-size: 0.45rem; letter-spacing: 0.5px; }
+            .container { padding: 2rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particle-container" id="particles"></div>
+
+    <div class="container">
+        <h1>Há quanto tempo a gente se conhece</h1>
+        <div class="counter-row">
+            <div class="time-box">
+                <span class="number" id="years">0</span>
+                <span class="label">Anos</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="months">0</span>
+                <span class="label">Meses</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="days">0</span>
+                <span class="label">Dias</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="hours">0</span>
+                <span class="label">Horas</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="minutes">0</span>
+                <span class="label">Minutos</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="seconds">0</span>
+                <span class="label">Segundos</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data de início configurada: 16 de Junho de 2026 às 18:30:00
+        const startDate = new Date(2026, 5, 16, 18, 30, 0);
+
+        function updateCounter() {
+            const now = new Date();
+            
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            let hours = now.getHours() - startDate.getHours();
+            let minutes = now.getMinutes() - startDate.getMinutes();
+            let seconds = now.getSeconds() - startDate.getSeconds();
+
+            if (seconds < 0) {
+                seconds += 60;
+                minutes--;
+            }
+            if (minutes < 0) {
+                minutes += 60;
+                hours--;
+            }
+            if (hours < 0) {
+                hours += 24;
+                days--;
+            }
+            if (days < 0) {
+                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += prevMonth.getDate();
+                months--;
+            }
+            if (months < 0) {
+                months += 12;
+                years--;
+            }
+
+            if (now < startDate) {
+                years = 0; months = 0; days = 0; hours = 0; minutes = 0; seconds = 0;
+            }
+
+            document.getElementById('years').innerText = years;
+            document.getElementById('months').innerText = months;
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+        }
+
+        function createParticles() {
+            const colors = ['rgba(255, 0, 127, 0.7)', 'rgba(138, 43, 226, 0.7)', 'rgba(218, 112, 214, 0.5)'];
+            const particleContainer = document.getElementById('particles');
+
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 8 + 4; 
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = `${Math.random() * 7 + 5}s`;
+                particle.style.boxShadow = `0 0 8px ${particle.style.background}`;
+                
+                particleContainer.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 12000);
+            }, 450);
+        }
+
+        setInterval(updateCounter, 1000);
+        updateCounter();
+        createParticles();
+    </script>
+</body>
+</html>
